@@ -1,0 +1,161 @@
+tbody tr {
+    text-align: center;
+}
+
+.card {
+    width: 80%;
+}
+
+.card-body {
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper {
+    width: 100%;
+    height: 300px;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formulario th {
+    background-color: #B8CCE4;
+}
+
+.formulario th,
+.formulario td {
+    border: 1px solid black;
+    font-size: 12px;
+    text-align: center;
+}
+
+.boton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border: 2px solid #3498db;
+    /* Cambia el color del borde seg n tus preferencias */
+    color: #3498db;
+    /* Cambia el color del texto seg n tus preferencias */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.boton:hover {
+    background-color: #3498db;
+    /* Cambia el color de fondo al pasar el mouse seg n tus preferencias */
+    color: #fff;
+    /* Cambia el color del texto al pasar el mouse seg n tus preferencias */
+}
+
+.botond {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border: 2px solid #58D68D;
+    /* Cambia el color del borde seg n tus preferencias */
+    color: #58D68D;
+    /* Cambia el color del texto seg n tus preferencias */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.botond:hover {
+    background-color: #28B463;
+    /* Cambia el color de fondo al pasar el mouse seg n tus preferencias */
+    color: #fff;
+    /* Cambia el color del texto al pasar el mouse seg n tus preferencias */
+}
+
+.boton svg {
+    margin-right: 5px;
+    /* A ade un peque o espacio entre el icono y el texto */
+}
+
+.contenedor {
+    width: 100%;
+    height: 90vh;
+    margin-top: 56px;
+    padding: 10px;
+    display: flex;
+}
+
+.container-cards div {
+    margin-bottom: 10px;
+}
+
+.cardm {
+    width: fit-content;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.cardscroll {
+    cursor: move;
+}
+
+.cardH {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.contenedor-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedor-row div {
+    margin-bottom: 10px;
+}
+
+.eliminar {
+    display: inline-block;
+    margin-left: 5px;
+    color: red;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.eliminar:hover {
+    text-decoration: underline;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.cardm input {
+    width: 80px;
+}
