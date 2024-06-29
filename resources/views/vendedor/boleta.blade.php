@@ -41,25 +41,25 @@
             <div class="sales-summary" style="width: 100%; padding: 10px">
                 <div class="header-info mb-2" style="display: flex; justify-content: space-between;">
                     <span>Asesor: {{ $vendedor->usuario }}</span>
-                    <span>{{ formatoFechaDos($venta[0]->fecha) }}</span>
+                    <span>{{ formatoFechaDos($venta->fecha) }}</span>
                 </div>
                 <div class="mb-4">
                     <div>
-                        <h4 class="text-center" id="nombreCliente">{{ $venta[0]->nombre }}</h4>
+                        <h4 class="text-center" id="nombreCliente">{{ $venta->nombre }}</h4>
                     </div>
                     <div class="text-center">
-                        <h5 id="direccionT">{{ $venta[0]->jr }} / {{ $venta[0]->urb }}</h5>
+                        <h5 id="direccionT">{{ $venta->jr }} / {{ $venta->urb }}</h5>
                     </div>
                     <div class="text-center">
                         <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>
-                        <span id="tocart">{{ $venta[0]->tocar }}</span> <span
-                            id="colorT">{{ $venta[0]->color }}</span>
+                        <span id="tocart">{{ $venta->tocar }}</span> <span
+                            id="colorT">{{ $venta->color }}</span>
                     </div>
                 </div>
                 <div class="text-center">
                     <h4 style="font-weight: bold; text-decoration: underline;">
                         <a style="text-decoration: none; color: black"
-                            id="telt">{{ $venta[0]->telefono }}</a>
+                            id="telt">{{ $venta->telefono }}</a>
                     </h4>
                 </div>
                 <div style="display: flex; justify-content: center; width: 100%;">
@@ -113,7 +113,7 @@
                 <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
                     <div style="display: flex; justify-content: center;">
                         <label for="firma">Firma:</label>
-                        <img src='{{ asset("storage/signatures/{$venta[0]->firma}") }}' alt="" width="300"
+                        <img src='{{ asset("storage/signatures/{$venta->firma}") }}' alt="" width="300"
                             height="200">
                     </div>
                 </div>

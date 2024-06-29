@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -143,13 +143,15 @@
                                 <thead>
                                     <tr>
                                         <th style="text-align: start" scope="col">Deposito (S/)</th>
-                                        <th style="text-align: start; font-weight: unset; border: 1px solid gray;" id="depositod" class="table-warning"></th>
+                                        <th style="text-align: start; font-weight: unset; border: 1px solid gray;"
+                                            id="depositod" class="table-warning"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <th style="text-align: start" scope="row">Taxi(S/)</th>
-                                        <td style="text-align: start; border: 1px solid gray;" class="table-warning" id="taxid"></td>
+                                        <td style="text-align: start; border: 1px solid gray;" class="table-warning"
+                                            id="taxid"></td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: start" scope="row">Efectivo(S/)</th>
@@ -157,7 +159,7 @@
                                     </tr>
                                     <tr>
                                         <th style="text-align: start" scope="row">Por cobrar(S/)</th>
-                                        <td style="text-align: start;border: 1px solid gray;">25</td>
+                                        <td style="text-align: start;border: 1px solid gray;" id="porcobrar"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -167,13 +169,13 @@
                                 <thead>
                                     <tr>
                                         <th style="text-align: start;" scope="col">Creditos (U)</th>
-                                        <th style="text-align: start; font-weight: unset;border: 1px solid gray;">150</th>
+                                        <th style="text-align: start; font-weight: unset;border: 1px solid gray;" id="creditos"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <th style="text-align: start" scope="row">Contados(U)</th>
-                                        <td style="text-align: start;border: 1px solid gray;">25</td>
+                                        <td style="text-align: start;border: 1px solid gray;" id="contado"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -181,8 +183,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <a type="button" class="btn btn-secondary" id="deleteGrupo">Eliminar</a>
+                    <button type="button" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </div>
@@ -214,7 +216,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="agregarGrupo" tabindex="-1" aria-labelledby="agregarGrupoLabel" aria-hidden="true">
+    <div class="modal fade" id="agregarGrupo" data-bs-backdrop="static" data-bs-keyboard="false"
+        aria-labelledby="agregarGrupoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -222,12 +225,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formGrupo">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre Grupo</label>
-                            <input type="text" class="form-control" id="nombre" required>
-                        </div>
-                    </form>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre Grupo</label>
+                        <input type="text" class="form-control" id="nombre" required>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -263,7 +264,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="grupoDetalle" aria-hidden="true" aria-labelledby="grupoDetalleLabel" tabindex="-1">
+    <div class="modal fade" id="grupoDetalle" data-bs-backdrop="static" tabindex="-1" data-bs-keyboard="false" aria-hidden="true"
+        aria-labelledby="grupoDetalleLabel">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -285,9 +287,9 @@
                                     @foreach ($asociados as $asociado)
                                         <option value="{{ $asociado->id }}/{{ strtoupper($asociado->usuario) }}">
                                             {{ strtoupper($asociado->usuario) }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            @endforeach
-                            </select>
                         </div>
                     </div>
                     <div class="cardH" id="cardho">
@@ -357,9 +359,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="guardarDetalle">Guardar</button>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="guardarDetalle">Guardar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -386,6 +388,5 @@
                 responsive: true
             }
         });
-        
     </script>
 @endsection

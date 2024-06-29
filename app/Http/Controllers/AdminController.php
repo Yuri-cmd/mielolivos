@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Grupo;
 use App\Models\Usuario;
 use App\Models\Producto;
 use Illuminate\Http\Request;
@@ -69,6 +70,15 @@ class AdminController extends Controller
     public function deleteGrupo(Request $request)
     {
         $deleted = DB::table('grupos')->where('id', $request->input('id'))->delete();
+        $existeGrupoUsuario = DB::table('grupo_usuario')->where('id_grupo', $request->input('id'))->get();
+        if (count($existeGrupoUsuario)) {
+            $idGrupoUsuario = $existeGrupoUsuario[0]->id;
+            $existeGrupoProductos = DB::table('grupo_usuario_producto')->where('id_grupo_usuario', $idGrupoUsuario)->get();
+            $deleted = DB::table('grupo_usuario')->where('id_grupo', $request->input('id'))->delete();
+            if (count($existeGrupoProductos)) {
+                $deleted = DB::table('grupo_usuario_producto')->where('id_grupo_usuario', $idGrupoUsuario)->delete();
+            }
+        }
         if ($deleted) {
             return response()->json(['success' => true, 'message' => 'Usuario eliminado correctamente']);
         } else {
@@ -138,7 +148,7 @@ class AdminController extends Controller
 
     public function getGrupoDetalle(Request $request)
     {
-        $datoGrupo = DB::table('grupos')->where('id', $request->input('id'))->get();
+        $datoGrupo = Grupo::where('id', $request->input('id'))->get();
         $detalle = DB::select("SELECT
                         gu.id,
                         u.usuario,
@@ -153,6 +163,16 @@ class AdminController extends Controller
                         id_grupo = {$request->input('id')} 
                     GROUP BY
                         gu.id, u.usuario");
-        return json_encode(["datoGrupo" => $datoGrupo, "detalle" => $detalle]);
+        $ventas = DB::table('grupo_usuario as g')
+            ->join('venta as v', 'v.id_usuario', '=', 'g.id_usuario')
+            ->selectRaw('
+                SUM(CASE WHEN v.es_contado = 1 THEN 1 ELSE 0 END) AS contado,
+                SUM(CASE WHEN v.es_contado = 0 THEN 1 ELSE 0 END) AS creditos,
+                SUM(CASE WHEN v.estado = 0 THEN 1 ELSE 0 END) AS cobrar
+            ')
+            ->where('g.id_grupo', $request->input('id'))
+            ->groupBy('g.id_grupo')
+            ->get();
+        return json_encode(["datoGrupo" => $datoGrupo, "detalle" => $detalle, "ventas" => $ventas]);
     }
 }

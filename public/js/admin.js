@@ -441,8 +441,10 @@ $(document).ready(function() {
             },
             success: function(response) {
                 $('#agregarGrupo').modal('hide'); 
-                $('#formGrupo')[0].reset(); 
-                $('#grupoDetalle').modal("show")
+                $('#nombre').val(); 
+                $('#grupoDetalle').modal("show");
+                $('.tituloGrupo').text('Grupo: '+nombre);
+                $('.spanGrupo').text(nombre);
                 $('#idGrupo').val(response.id);
             },
             error: function(response) {
@@ -450,14 +452,9 @@ $(document).ready(function() {
                 alert('Ocurrió un error al enviar los datos');
             }
         });
-        $('#agregarGrupo').modal('hide'); 
-        $('#formGrupo')[0].reset(); 
-        $('#grupoDetalle').modal("show");
-        $('.tituloGrupo').text('Grupo: '+nombre);
-        $('.spanGrupo').text(nombre);
     });
 
-    $('.deleteGrupo').click(function(){
+    $('#deleteGrupo').click(function(){
         let id = $(this).attr("data-id"); 
         Swal.fire({
             title: "¿Estas seguro?",
@@ -592,7 +589,7 @@ $(document).ready(function() {
                                     <input type="text" class="form-control" id="stock-${v.id}" value="${v.stock}">
                                 </div>
                                 <div class="cardm grid-item">
-                                    <input type="text" class="form-control" id="input-${v.id}" value="">
+                                    <input type="text" class="form-control" id="input-${v.id}" value="0">
                                 </div>
                             </div>`;
                     });
@@ -801,9 +798,12 @@ $(document).ready(function() {
                 $('#totalCampo').text(totalCampo);
                 $('#totalVendido').text(totalVendido);
                 $('#totalSobrante').text(totalSobrante);
-                $('#depositod').text(datos.datoGrupo[0].deposito);
-                $('#taxid').text(datos.datoGrupo[0].taxi);
-                $('#efectivod').text(datos.datoGrupo[0].efectivo);
+                $('#depositod').text(datos.datoGrupo[0].deposito ?? "0");
+                $('#taxid').text(datos.datoGrupo[0].taxi ?? "0");
+                $('#efectivod').text(datos.datoGrupo[0].efectivo ?? "0");
+                $('#porcobrar').text(datos.ventas[0].cobrar ?? "0");
+                $('#contado').text(datos.ventas[0].contado ?? "0");
+                $('#creditos').text(datos.ventas[0].creditos ?? "0");
                 const ctxDetalle = document.getElementById('bar').getContext('2d');
                 const barDetalle = new Chart(ctxDetalle, {
                     type: 'bar',
@@ -822,6 +822,7 @@ $(document).ready(function() {
                         responsive: true
                     }
                 });
+                $('#deleteGrupo').attr('data-id', id);
             },
         );
         $('#exampleModal').modal('show');
