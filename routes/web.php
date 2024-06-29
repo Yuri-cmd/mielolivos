@@ -5,7 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\VendedorController;
 use App\Http\Controllers\CobradorController;
-
+use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\ProductoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,3 +24,30 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('/vendedor/dashboard', [VendedorController::class, 'index'])->name('vendedor.dashboard');
 Route::get('/cobrador/dashboard', [CobradorController::class, 'index'])->name('cobrador.dashboard');
+
+// Almancen
+route::get('/admin/almacen', [AdminController::class, 'almacen'])->name('almacen');
+route::get('/get-producto', [ProductoController::class, 'getProducto'])->name('getProducto');
+Route::post('/update-estado-producto', [ProductoController::class, 'updateEstadoProducto'])->name('updateEstadoProducto');
+Route::post('/update-stock-producto', [ProductoController::class, 'updateStockProducto'])->name('updateStockProducto');
+Route::post('/actualizar-producto', [ProductoController::class, 'update'])->name('updateProducto');
+Route::post('/crear-producto', [ProductoController::class, 'store'])->name('createProducto');
+Route::get('/exportar-productos', [ExcelController::class, 'exportProductos'])->name('exportar.productos');
+Route::post('/importar-productos', [ProductoController::class, 'importar'])->name('importar.productos');
+
+//Usuarios
+route::post('/admin/asociados', [AdminController::class, 'createAsociado'])->name('createAsociado');
+route::post('/admin/delete/asociado', [AdminController::class, 'deleteAsociado'])->name('deleteAsociado');
+route::post('/admin/asociados', [AdminController::class, 'createAsociado'])->name('createAsociado');
+route::post('/admin/delete/asociado', [AdminController::class, 'deleteAsociado'])->name('deleteAsociado');
+route::post('/admin/grupos', [AdminController::class, 'createGrupo'])->name('createGrupo');
+route::post('/admin/delete/grupo', [AdminController::class, 'deleteGrupo'])->name('deleteGrupo');
+route::post('/admin/cobradores', [AdminController::class, 'createCobrador'])->name('createCobrador');
+route::post('/admin/delete/cobrador', [AdminController::class, 'deleteCobrador'])->name('deleteCobrador');
+route::post('/admin/detalle/grupo', [AdminController::class, 'createDetalleGrupo'])->name('createDetalleGrupo');
+route::post('/admin/save/grupo', [AdminController::class, 'saveDetalle'])->name('saveDetalle');
+route::post('/admin/get/grupo', [AdminController::class, 'getGrupoDetalle'])->name('getGrupoDetalle');
+
+//Vendedor
+route::post('/vendedor/saveVenta', [VendedorController::class, 'saveVenta'])->name('saveVenta');
+route::get('/vendedor/venta/{id}', [VendedorController::class, 'seeVenta'])->name('seeVenta');

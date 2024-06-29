@@ -88,31 +88,13 @@ tbody tr {
     /* A ade un peque o espacio entre el icono y el texto */
 }
 
-.contenedor {
-    width: 100%;
-    height: 90vh;
-    margin-top: 56px;
-    padding: 10px;
-    display: flex;
-}
+
 
 .container-cards div {
     margin-bottom: 10px;
 }
 
-.cardm {
-    width: fit-content;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 3px;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-}
 
-.cardscroll {
-    cursor: move;
-}
 
 .cardH {
     width: 100%;
@@ -146,6 +128,18 @@ tbody tr {
     text-decoration: underline;
 }
 
+.eliminarA {
+    display: inline-block;
+    margin-left: 5px;
+    color: red;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.eliminarA:hover {
+    text-decoration: underline;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -158,4 +152,204 @@ input[type="number"] {
 
 .cardm input {
     width: 80px;
+}
+
+/*Almacen*/
+/* Estilo para todo el scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+    /* Ancho del scrollbar */
+    height: 12px;
+    /* Alto del scrollbar (para el scrollbar horizontal) */
+}
+
+/* Estilo para el track del scrollbar */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Color del track */
+    border-radius: 10px;
+    /* Radio del borde */
+}
+
+/* Estilo para el thumb del scrollbar */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Color del thumb */
+    border-radius: 10px;
+    /* Radio del borde */
+}
+
+/* Estilo para el thumb al pasar el cursor por encima */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Color del thumb al pasar el cursor por encima */
+}
+
+/* Estilo para el scrollbar horizontal */
+::-webkit-scrollbar-horizontal {
+    height: 12px;
+}
+
+/* Estilo para el scrollbar vertical */
+::-webkit-scrollbar-vertical {
+    width: 12px;
+}
+
+.contenedor-almacen {
+    width: 100%;
+    height: 90vh;
+    margin-top: 56px;
+    padding: 10px;
+}
+
+#example_wrapper {
+    width: 100% !important;
+}
+
+.card {
+    border-color: white;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+/* Dashboard */
+.contenedor {
+    width: 100%;
+    height: 90vh;
+    margin-top: 56px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenedor-buttons {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    /* Añadido para mejorar el responsive */
+    margin-bottom: 10px;
+    gap: 10px;
+    /* Añadido para separar los botones */
+}
+
+
+.shadow {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border: 1px solid rgba(99, 99, 99, 0.2);
+}
+
+.contenedor-dashboard {
+    width: 100%;
+    height: 60vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.contenedor-usuarios {
+    flex: 1;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 0.625rem;
+}
+
+.seccion-uno {
+    display: flex;
+    gap: 10px;
+}
+
+.contenedor-listado,
+.contenedor-listado-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.contenedor-listado-bottom {
+    width: 50%;
+    margin-top: 40px;
+}
+
+.contenedor-agregar {
+    padding: 5px 0;
+}
+
+.usuarios {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 350px;
+    padding: 5px 0;
+    overflow-y: auto;
+}
+
+.cardm {
+    width: fit-content;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.cardscroll {
+    cursor: move;
+}
+
+.contenedor-grafica {
+    flex: 2;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 0.625rem;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+}
+
+.contenedor-grafica div {
+    text-align: center;
+    width: 100%;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(10, auto);
+}
+
+.grid-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+
+@media (max-width: 768px) {
+    .contenedor-buttons {
+        justify-content: center;
+    }
+
+    .contenedor-dashboard {
+        flex-direction: column;
+        height: auto;
+        /* Ajusta la altura para dispositivos móviles */
+    }
+
+    .contenedor-usuarios,
+    .contenedor-grafica {
+        width: 100%;
+        height: auto;
+        /* Ajusta la altura para dispositivos móviles */
+    }
+
+    .usuarios {
+        width: 100%;
+    }
 }
