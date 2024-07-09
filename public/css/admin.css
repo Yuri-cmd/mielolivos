@@ -288,7 +288,7 @@ input[type="number"] {
 }
 
 .cardm {
-    width: fit-content;
+    width: fit-content !important;
     height: auto;
     display: flex;
     flex-direction: column;

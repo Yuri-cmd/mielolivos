@@ -172,7 +172,7 @@
                             <div class="col"><input id="input2" type="number" class="form-control"
                                     value=""></div>
                             <div class="col"><input id="input3" type="number" class="form-control"
-                                    value=""></div>
+                                    value="" readonly></div>
                         </div>
                         <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
                             <div style="display: flex; justify-content: center;">

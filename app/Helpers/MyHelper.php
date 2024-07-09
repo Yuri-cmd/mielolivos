@@ -66,4 +66,12 @@ if (!function_exists('fechas')) {
     }
 }
 
-
+if(!function_exists('colorVencimiento')){
+    function colorVencimiento($dias){
+        $color = "text-bg-secondary";
+        if($dias > 14){
+            $color = "text-bg-danger";
+        }
+        return $color;
+    }
+}

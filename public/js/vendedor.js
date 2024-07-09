@@ -232,23 +232,26 @@ function formatNumber(number) {
     });
 }
 
-input1.addEventListener('input', function() {
-    const totalAmount = $('#totalAmount').val();
-    const input1 = document.getElementById('input1');
-    const input2 = document.getElementById('input2');
+function calculateRemaining() {
+    const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+    const input1 = parseFloat(document.getElementById('input1').value) || 0;
+    const input2 = parseFloat(document.getElementById('input2').value) || 0;
     const input3 = document.getElementById('input3');
-    let value = parseFloat(input1.value);
-    // Validar que el valor no sea mayor al monto total
-    if (value > totalAmount) {
-        alert("El valor no puede ser mayor al monto total de " + totalAmount);
-        input1.value = totalAmount;
-        value = totalAmount;
+
+    let sum = input1 + input2;
+    
+    if (sum > totalAmount) {
+        alert("La suma de los valores no puede ser mayor al monto total de " + totalAmount);
+        // Reset values to prevent exceeding totalAmount
+        document.getElementById('input1').value = "";
+        document.getElementById('input2').value = "";
+        input3.value = "";
+        return;
     }
 
-    // Calcular el resto del monto y dividirlo entre los otros dos inputs
-    let remainingAmount = totalAmount - value;
-    let dividedAmount = remainingAmount / 2;
+    let remainingAmount = totalAmount - sum;
+    input3.value = remainingAmount.toFixed(2);
+}
 
-    input2.value = dividedAmount.toFixed(2);
-    input3.value = dividedAmount.toFixed(2);
-});
+document.getElementById('input1').addEventListener('input', calculateRemaining);
+document.getElementById('input2').addEventListener('input', calculateRemaining);

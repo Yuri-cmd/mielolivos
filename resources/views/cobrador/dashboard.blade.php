@@ -6,7 +6,7 @@
                 <h5>{{ $fecha }}</h5>
             </div>
             <div class="header-detalle">
-                <h5>Ventas del Día</h5>
+                <h5>Ventas del D&iacute;a</h5>
                 <h5 style="margin-left: 10px;">{{ date('d') }}</h5>
             </div>
         </div>
@@ -29,66 +29,21 @@
                         <th scope="col">#</th>
                         <th scope="col">datos</th>
                         <th scope="col">Deuda</th>
-                        <th scope="col">Días Vencidos</th>
+                        <th scope="col">D&iacute;as Vencidos</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr onclick="mostrar()" style="cursor: pointer;">
-                        <th scope="row">1</th>
-                        <td>
-                            <span>Rosa Maria Lima Guerrero</span> <br>
-                            <small>Asesor: Carlos</small>
-                        </td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                        <td><span class="badge text-bg-danger">500</span></td>
-                    </tr>
-                    <tr onclick="mostrar()" style="cursor: pointer;">
-                        <th scope="row">1</th>
-                        <td>
-                            <span>Rosa Maria Lima Guerrero</span> <br>
-                            <small>Asesor: Carlos</small>
-                        </td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                    </tr>
-                    <tr onclick="mostrar()" style="cursor: pointer;">
-                        <th scope="row">1</th>
-                        <td>
-                            <span>Rosa Maria Lima Guerrero</span> <br>
-                            <small>Asesor: Carlos</small>
-                        </td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                    </tr>
-                    <tr onclick="mostrar()" style="cursor: pointer;">
-                        <th scope="row">1</th>
-                        <td>
-                            <span>Rosa Maria Lima Guerrero</span> <br>
-                            <small>Asesor: Carlos</small>
-                        </td>
-                        <td>
-                            <span class="badge text-bg-secondary">500</span>
-                        </td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                    </tr>
-                    <tr onclick="mostrar()" style="cursor: pointer;">
-                        <th scope="row">1</th>
-                        <td>
-                            <span>Rosa Maria Lima Guerrero</span> <br>
-                            <small>Asesor: Carlos</small>
-                        </td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                    </tr>
-                    <tr onclick="mostrar()" style="cursor: pointer;">
-                        <th scope="row">1</th>
-                        <td>
-                            <span>Rosa Maria Lima Guerrero</span> <br>
-                            <small>Asesor: Carlos</small>
-                        </td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                        <td><span class="badge text-bg-secondary">500</span></td>
-                    </tr>
+                    @foreach ($ventas as $i => $venta)
+                        <tr onclick="mostrar()" style="cursor: pointer;">
+                            <th scope="row">{{ $i + 1 }}</th>
+                            <td>
+                                <span>{{ $venta->nombre }}</span> <br>
+                                <small>{{ $venta->usuario }}</small>
+                            </td>
+                            <td><span class="badge text-bg-secondary">{{ $venta->deuda }}</span></td>
+                            <td><span class="badge {{colorVencimiento($venta->dias_desde_venta)}}">{{ $venta->dias_desde_venta }}</span></td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

@@ -330,17 +330,130 @@ $(document).ready(function() {
     });
 
     // Hacer el contenedor de vendedores como una zona de soltado
+    var grupoCreado = false;
+
+    $("#contenedorGrupos").droppable({
+        accept: ".cardscroll",
+        drop: function(event, ui) {
+            if (!grupoCreado) {
+                let $card = $(ui.helper).clone();
+                let nombreAsociado = $card.find("span").text().trim().split("x")[0]; 
+                let nombreGrupo = "G" + nombreAsociado; 
+                let fecha = $card.find("small").text().trim(); 
+                let id = $card.data('id');
+                // Crear el nuevo grupo con botón para borrar
+                let nuevoGrupo = $("<div>", { "class": "cardm", "style": "position: relative; cursor: pointer;"})
+                    .append($("<span>").text(nombreGrupo))
+                    .append($("<span>", { "class": "close-button eliminar", "style": "cursor: pointer; position: absolute; top: 5px; right: 5px;" })
+                        .text("x").click(function() {
+                            location.reload();
+                        }))
+                    .append($("<small>").text(fecha));
+
+                let usuario = $("<div>", { "class": "cardm grupoUser", "data-id": id })
+                    .append($("<span>").text(nombreAsociado))
+                    .append($("<span>", { "class": "close-button eliminar", "style": "cursor: pointer; position: absolute; top: 5px; right: 5px;" })
+                        .text("x").click(function() {
+                            $(this).parent().remove();
+                        }))
+                    .append($("<small>").text(fecha)); 
+                
+                $('#contenedorVendedores').append(usuario);
+                $(this).append(nuevoGrupo);
+                $('.grafica').hide();
+                getStockMaster(id);
+                // Mostrar el contenedor del grupo
+                $('.grupo').show();
+                $('.spanGrupo').html(nombreGrupo);
+
+                // Actualizar el estado del grupo
+                grupoCreado = true;
+            } else {
+                Swal.fire({
+                    title: "Info",
+                    text: "Ya se ha creado un grupo. No puede mover más elementos aquí hasta que se termine con la creación.",
+                    icon: "info"
+                });
+            }
+        }
+    });
+
     $("#contenedorVendedores").droppable({
         accept: ".cardscroll",
         drop: function(event, ui) {
-            var $card = $(ui.helper).clone();
-            $card.removeClass("ui-draggable-dragging").draggable({
-                helper: "clone"
-            });
-            $(this).append($card);
-            resetearElemento();
+            let $card = $(ui.helper).clone();
+            let nombreAsociado = $card.find("span").text().trim().split("x")[0];
+            let fecha = $card.find("small").text().trim(); 
+            let id = $card.data('id');
+            // Evitar duplicados
+            if ($("#contenedorVendedores .cardm span:contains('" + nombreAsociado + "')").length > 0) {
+                Swal.fire({
+                    title: "Info",
+                    text: "Este vendedor ya ha sido agregado.",
+                    icon: "info"
+                });
+                return;
+            }
+
+            // Crear el nuevo elemento para el contenedor de vendedores con botón para borrar
+            let nuevoAsociado = $("<div>", { "class": "cardm grupoUser", "data-id": id, "style": "margin-bottom: 10px; position: relative;" })
+                .append($("<span>").text(nombreAsociado))
+                .append($("<span>", { "class": "close-button eliminar", "style": "cursor: pointer; position: absolute; top: 5px; right: 5px;" })
+                    .text("x").click(function() {
+                        $(this).parent().remove();
+                    }))
+                .append($("<small>").text(fecha));
+
+            getStockMaster(id);
+            // Añadir el nuevo elemento a #contenedorVendedores
+            $('#contenedorVendedores').append(nuevoAsociado);
         }
     });
+
+    $("#contenedorCobradores").droppable({
+        accept: ".cardscroll",
+        drop: function(event, ui) {
+            if ($("#contenedorCobradores .cardm").length > 0) {
+                Swal.fire({
+                    title: "Info",
+                    text: "Solo puede agregar un cobrador.",
+                    icon: "info"
+                });
+                return;
+            }
+
+            let $card = $(ui.helper).clone();
+            let nombreCobrador = $card.find("span").text().trim().split("x")[0];
+            let fecha = $card.find("small").text().trim(); 
+            let id = $card.data('id');
+
+            let nuevoCobrador = $("<div>", { "class": "cardm grupoCobrador", "data-id": id, "style": "margin-bottom: 10px; position: relative;" })
+                .append($("<span>").text(nombreCobrador))
+                .append($("<span>", { "class": "close-button eliminar", "style": "cursor: pointer; position: absolute; top: 5px; right: 5px;" })
+                    .text("x").click(function() {
+                        $(this).parent().remove();
+                    }))
+                .append($("<small>").text(fecha));
+
+            $('#contenedorCobradores').append(nuevoCobrador);
+        }
+    });
+
+    function getStockMaster(id){
+        $.post(urlGetMasterUsuario, {
+            _token: token,
+            id: id
+        },
+        function (data, textStatus, jqXHR) {
+            var pcampoDiv = $('<div>', {
+                class: 'cardm',
+                html: `<input type="number" class="form-control cantidades" inputmode="numeric" data-id="${id}" value="${data}">`
+            });
+
+            $('#pcampo').append(pcampoDiv);
+        },
+    );
+    }
 
     $("#contenedorVendedores .cardm span").append('<a href="#" class="eliminar">x</a>');
 
@@ -431,21 +544,40 @@ $(document).ready(function() {
     });
 
     $('#submitGrupo').click(function(){
-        let nombre = $('#nombre').val();
+        let nombre = $('.spanGrupo').text();
+        let users = $('.grupoUser');
+        let stocks = $('.cantidades');
+        let vendedores = [];
+        let idcobrador = $('.grupoCobrador').data('id');
+        $(users).each(function (index, element) {
+            let id = $(element).data('id');
+            $(stocks).each(function (index, stock) {
+                let stockId = $(stock).data('id');
+                if(id == stockId){
+                    let cantidad = $(stock).val();
+                    vendedores.push({"id": id, "stock": cantidad});
+                }
+            });
+            
+        });
         $.ajax({
             url: urlCreateGrupo, // Ajusta la ruta según tu configuración
             method: 'POST',
             data: {
-                usuario: $('#nombre').val(),
-                _token: token
+                _token: token,
+                usuario: nombre,
+                vendedores: JSON.stringify(vendedores),
+                idcobrador: idcobrador
             },
             success: function(response) {
-                $('#agregarGrupo').modal('hide'); 
-                $('#nombre').val(); 
-                $('#grupoDetalle').modal("show");
-                $('.tituloGrupo').text('Grupo: '+nombre);
-                $('.spanGrupo').text(nombre);
-                $('#idGrupo').val(response.id);
+                Swal.fire({
+                    icon: "success",
+                    title: "Se guardo correctamente",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                }).then((result) => {
+                    location.reload();
+                });
             },
             error: function(response) {
                 // Maneja los errores
@@ -767,84 +899,257 @@ $(document).ready(function() {
         );
     });
 
-    $('.visualizar').click(function () {
-        let id = $(this).attr("data-id"); 
-        $.post(urlGetGrupoDetalle, {_token:token, id:id},
-            function (data, textStatus, jqXHR) {
-                let datos = JSON.parse(data);
-                let fecha = formatDate(datos.datoGrupo[0].fecha);
-                $('.nameGrupo').text(datos.datoGrupo[0].nombre);
-                $('.fechaGrupo').text(fecha);
-                let tbody = '';
-                let totalCampo = 0;
-                let totalVendido = 0;
-                let totalSobrante = 0;
-                let label = [];
-                let valores = [];
-                $.each(datos.detalle, function (i, v) {
-                    totalCampo += v.campo;
-                    totalVendido += parseFloat(v.vendidos);
-                    totalSobrante += v.sobrantes;
-                    tbody += `<tr>
-                                <td style="text-align: center">${v.usuario}<br>${fecha}</td>
-                                <td class="table-warning" style="text-align: center">${v.campo}</td>
-                                <td cstyle="text-align: center">${v.vendidos}</td>
-                                <td style="text-align: center">${v.sobrantes}</td>
-                            </tr>`;
-                    label.push(v.usuario);
-                    valores.push(v.vendidos);
-                });
-                $('#detalleBody').html(tbody);
-                $('#totalCampo').text(totalCampo);
-                $('#totalVendido').text(totalVendido);
-                $('#totalSobrante').text(totalSobrante);
-                $('#depositod').text(datos.datoGrupo[0].deposito ?? "0");
-                $('#taxid').text(datos.datoGrupo[0].taxi ?? "0");
-                $('#efectivod').text(datos.datoGrupo[0].efectivo ?? "0");
-                $('#porcobrar').text(datos.ventas[0].cobrar ?? "0");
-                $('#contado').text(datos.ventas[0].contado ?? "0");
-                $('#creditos').text(datos.ventas[0].creditos ?? "0");
-                const ctxDetalle = document.getElementById('bar').getContext('2d');
-                const barDetalle = new Chart(ctxDetalle, {
-                    type: 'bar',
-                    data: {
-                        labels: label,
-                        datasets: [{
-                            label: '',
-                            data: valores,
-                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            borderWidth: 1
-                        }],
-                    },
-                    options: {
-                        indexAxis: 'x', // <-- here
-                        responsive: true
-                    }
-                });
-                $('#deleteGrupo').attr('data-id', id);
-            },
-        );
-        $('#exampleModal').modal('show');
+    // Asignar cantidad masiva
+    $('#stockMasivo').on('input', function() {
+        var cantidad = $(this).val();
+        $('.stockMaster').each(function() {
+            $(this).val(cantidad);
+        });
     });
 
-    function formatDate(fechaOriginal) { 
-        // Crear un objeto Date
-        const fecha = new Date(fechaOriginal);
+    $('#master').click(function (){
+        $('#masterModal').modal('show');
+        $.get(urlGetMaster,
+            function (data, textStatus, jqXHR) {
+                let usuarios = JSON.parse(data);
+                let tbody = "";
+                $.each(usuarios, function (i, v) { 
+                    tbody += "<tr>";
+                    tbody += `<th scope="row">${ i + 1 }</th>`;
+                    tbody += `<th scope="row">${capitalizeFirstLetter(v.usuario)}</th>`;
+                    tbody += `<td><div class="cardm"><input type="number" class="form-control stockMaster" data-idUsuario='${v.id}' inputmode="numeric" value="${v.stock}">
+                              </div></td></th>`;
+                    tbody += `</tr>`;
+                });
+                $('#tableUsuarios tbody').html(tbody)
+            },
+        );
+    });
+     // Enviar datos al controlador
+    $('#guardarBtn').on('click', function() {
+        var datos = [];
+        $('.stockMaster').each(function() {
+            var idUsuario = $(this).data('idusuario');
+            var stock = $(this).val();
+            datos.push({ id: idUsuario, stock: stock });
+        });
 
-        // Obtener el nombre del día en español
-        const opcionesDia = { weekday: 'long' };
-        const nombreDia = fecha.toLocaleDateString('es-ES', opcionesDia);
+        $.ajax({
+            url: urlMasterStock,  // Cambia esto a la ruta correcta
+            type: 'POST',
+            data: {
+                _token: token,
+                datos: datos
+            },
+            success: function(response) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Se guardo correctamente",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                  }).then((result) => {
+                    $('#masterModal').modal('hide');
+                  });
+            },
+            error: function(xhr, status, error) {
+                // Maneja el error aquí
+                alert('Ocurrió un error al guardar los datos');
+            }
+        });
+    });
 
-        // Obtener el día del mes
-        const diaMes = fecha.getDate();
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    
+    $('#depositod, #taxid').on('blur', function() {
+        var idGrupo = $('#idGrupoView').val();
+        var deposito = $('#depositod').text().trim();
+        var taxi = $('#taxid').text().trim();
+        // Envía ambos valores al servidor
+        $.post(urlUpdateDepositoTaxiGrupo, {
+            _token: token,
+            deposito: deposito,
+            taxi: taxi,
+            idGrupo: idGrupo
+        }, function(data, textStatus, jqXHR) {
+            Swal.fire("Actualizado");
+        });
+    });
 
-        // Obtener el nombre del mes en español
-        const opcionesMes = { month: 'long' };
-        const nombreMes = fecha.toLocaleDateString('es-ES', opcionesMes);
+    $('#miTabla').on('blur', '.campoEdit', function() {
+        let idGrupo = $('#idGrupoView').val();
+        let campo = $(this).text().trim();
+        let idUser = $(this).data('id');
+        $.post(urlUpdateCampoUsuario, {
+            _token: token,
+            idGrupo: idGrupo,
+            idUsuario: idUser,
+            campo: campo
+        }, function(data, textStatus, jqXHR) {
+            // Manejar la respuesta del servidor si es necesario
+            Swal.fire("Actualizado");
+        }).fail(function(xhr, status, error) {
+            console.error('Error al actualizar:', error);
+            Swal.fire("Error al actualizar");
+        });
+    });
 
-        // Formatear la fecha
-        return fechaFormateada = `${nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1)} ${diaMes} ${nombreMes}`;
+    $('#miTabla').on('click', '.detalleVendedor', function() {
+        $('#exampleModal').modal('hide');
+        $('#detalleVendedorModal').modal('show');
+        let idGrupoUsuario = $(this).data('id');
+        $('#idGrupoUsuario').val(idGrupoUsuario);
+        $.post(urlGetDetalleVendedor, {_token: token, idGrupoUsuario: idGrupoUsuario},
+            function (data, textStatus, jqXHR) {
+                $('#nombreVendedor').text(capitalizeFirstLetter(data.vendedor));
+                $('#fechaVenta').text(data.fecha);
+                let tbody = '';
+                let totalContado = 0; 
+                let contador = 1;
+                let totalVendedor = 0;
+                let totalCreditos = 0;
+                $.each(data.ventas, function (i, v) { 
+                    tbody += '<tr>';
+                    tbody += `<th scope="row">${i+1}</th>`;
+                    tbody += `<td>${v.nombre}</td>`;
+                    tbody += `<td>${v.total_cantidad}</td>`;
+                    tbody += '</tr>';
+                    contador++;
+                    totalVendedor += v.total_cantidad;
+                    totalCreditos += v.total_cantidad;
+                });
 
-     }
+                $.each(data.contado, function (i, v) { 
+                    totalContado+= v.total_cantidad;
+                });
+                if(data.contado.length > 0){
+                    tbody += '<tr>';
+                    tbody += `<th scope="row">${contador + 1}</th>`;
+                    tbody += `<td>Contado</td>`;
+                    tbody += `<td>${totalContado}</td>`;
+                    tbody += '</tr>';
+                    totalVendedor += totalContado;
+                }
+
+                let tbodyDetalle = '<tr>';
+                tbodyDetalle+= `<td>${totalCreditos}</td>`;
+                tbodyDetalle+= `<td>${totalContado}</td>`;
+                tbodyDetalle+= `<td>0</td>`;
+                tbodyDetalle+= `<td>${data.porCobrar}</td>`;
+                tbodyDetalle+= `<td>100</td>`;
+                tbodyDetalle+= `</tr>`;
+                $('#tableDetalleVenta tbody').html(tbodyDetalle);
+
+                $('#totalVendedor').html('Total: ' + totalVendedor);
+                $('#tableDetalle tbody').html(tbody);
+            },
+        );
+    });
+
+    $('#cerrarDetalle').click(function (){
+        $('#detalleVendedorModal').modal('hide');
+        let id = $('#idGrupoUsuario').val();
+        visualizarGrupo(id);
+    });
+
+    $('#buscador').click(function (){
+        $('#buscadorModal').modal('show');
+        $.get(urlGetVentas,
+            function (data, textStatus, jqXHR) {
+                let tbody = '';
+                $.each(data, function (i, v) { 
+                    tbody += '<tr>';
+                    tbody += `<th>${ i + 1}</th>`
+                    tbody += `<td>${v.nombre}</td>`;
+                    tbody += `<td>${v.usuario}</td>`;
+                    tbody += `</tr>`;
+                });
+                $('#tableBuscador tbody').html(tbody);
+                new DataTable('#tableBuscador');
+            },
+        );
+    });
 });
+
+function visualizarGrupo(id){
+    // let id = $(this).attr("data-id"); 
+    $.post(urlGetGrupoDetalle, {_token:token, id:id},
+        function (data, textStatus, jqXHR) {
+            let datos = JSON.parse(data);
+            let fecha = formatDate(datos.datoGrupo[0].fecha);
+            $('.nameGrupo').text(datos.datoGrupo[0].nombre);
+            $('.fechaGrupo').text(fecha);
+            let tbody = '';
+            let totalCampo = 0;
+            let totalVendido = 0;
+            let totalSobrante = 0;
+            let label = [];
+            let valores = [];
+            $.each(datos.detalle, function (i, v) {
+                totalCampo += v.campo;
+                totalVendido += parseFloat(v.vendidos);
+                totalSobrante += v.sobrantes;
+                tbody += `<tr>
+                            <td style="text-align: center; cursor: pointer;" class="detalleVendedor" data-id="${v.id}">${v.usuario}<br>${fecha}</td>
+                            <td class="table-warning campoEdit" style="text-align: center" data-id="${v.id}" contenteditable="true">${v.campo}</td>
+                            <td cstyle="text-align: center">${v.vendidos}</td>
+                            <td style="text-align: center">${v.sobrantes}</td>
+                        </tr>`;
+                label.push(v.usuario);
+                valores.push(v.vendidos);
+            });
+            $('#idGrupoView').val(id);
+            $('#detalleBody').html(tbody);
+            $('#totalCampo').text(totalCampo);
+            $('#totalVendido').text(totalVendido);
+            $('#totalSobrante').text(totalSobrante);
+            $('#depositod').text(datos.datoGrupo[0].deposito ?? "0");
+            $('#taxid').text(datos.datoGrupo[0].taxi ?? "0");
+            $('#efectivod').text(datos.ventaDetalle[0]?.efectivo ?? "0");
+            $('#porcobrar').text(datos.ventaDetalle[0]?.cobrar ?? "0");
+            $('#contado').text(datos.ventas[0]?.contado ?? "0");
+            $('#creditos').text(datos.ventas[0]?.creditos ?? "0");
+            const ctxDetalle = document.getElementById('bar').getContext('2d');
+            const barDetalle = new Chart(ctxDetalle, {
+                type: 'bar',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: '',
+                        data: valores,
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }],
+                },
+                options: {
+                    indexAxis: 'x', // <-- here
+                    responsive: true
+                }
+            });
+            $('#deleteGrupo').attr('data-id', id);
+        },
+    );
+    $('#exampleModal').modal('show');
+}
+
+function formatDate(fechaOriginal) { 
+    // Crear un objeto Date
+    const fecha = new Date(fechaOriginal);
+
+    // Obtener el nombre del día en español
+    const opcionesDia = { weekday: 'long' };
+    const nombreDia = fecha.toLocaleDateString('es-ES', opcionesDia);
+
+    // Obtener el día del mes
+    const diaMes = fecha.getDate();
+
+    // Obtener el nombre del mes en español
+    const opcionesMes = { month: 'long' };
+    const nombreMes = fecha.toLocaleDateString('es-ES', opcionesMes);
+
+    // Formatear la fecha
+    return fechaFormateada = `${nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1)} ${diaMes} ${nombreMes}`;
+
+}

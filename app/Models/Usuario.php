@@ -15,4 +15,9 @@ class Usuario extends Authenticatable
         'estado',
         'rol',
     ];
+    
+    public function masters()
+    {
+        return $this->hasMany(Master::class, 'id_usuario', 'id');
+    }
 }

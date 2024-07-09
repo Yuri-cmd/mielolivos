@@ -41,10 +41,17 @@ class VendedorController extends Controller
 
     public function getCantidadVentasUsuario($id)
     {
-        $ventas = Venta::where('id_usuario', $id)
-            ->whereDate('fecha', Carbon::today())
+        $ventas = Venta::selectRaw('SUM(venta_detalle.cantidad) as total_cantidad')
+            ->join('venta_detalle', 'venta_detalle.id_venta', '=', 'venta.id')
+            ->where('venta.id_usuario', $id)
+            ->whereDate('venta.fecha', Carbon::today())
+            ->groupBy('venta.id_usuario')
             ->get();
-        return count($ventas);
+        $total = 0;
+        foreach ($ventas as $venta) {
+            $total = $venta->total_cantidad;
+        }
+        return $total;
     }
 
     public function getProductos($detalle, $productos)
@@ -114,7 +121,7 @@ class VendedorController extends Controller
         if (!$tipo) {
             DB::insert(
                 'insert into cuotas (id_venta,cuota1,cuota2,cuota3) values (?,?,?,?)',
-                [$insertedId, "{$request->cuotas['cuota1']}", "{$request->cuotas['cuota2']}", "{$request->cuotas['cuota2']}"]
+                [$insertedId, "{$request->cuotas['cuota1']}", "{$request->cuotas['cuota2']}", "{$request->cuotas['cuota3']}"]
             );
         }
         return json_encode($insertedId);
