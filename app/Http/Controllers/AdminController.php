@@ -127,9 +127,10 @@ class AdminController extends Controller
                 'id_usuario' => $usuario->id
             ]);
             foreach ($productos as $producto) {
+                $stock = $usuario->stock / 10;
                 DB::insert(
                     'insert into grupo_usuario_producto (id_grupo_usuario,id_producto,stock) values (?,?,?)',
-                    [$insertedId, $producto->id, "{$usuario->stock}"]
+                    [$insertedId, $producto->id, "{$stock}"]
                 );
             }
         }
@@ -222,41 +223,48 @@ class AdminController extends Controller
 
     public function saveMaster(Request $request)
     {
-        foreach ($request->datos as $dato) {
-            $existeUsuario = Master::where('id_usuario', $dato["id"])->first();
-            if ($existeUsuario) {
-                Master::where('id_usuario', $dato["id"])->update([
-                    'cantidad' => $dato["stock"]
-                ]);
-            } else {
-                Master::create([
-                    'id_usuario' => $dato["id"],
-                    'cantidad' => $dato["stock"]
-                ]);
+        $usuarios = Usuario::where('rol', 2)->get();
+        foreach ($usuarios as $usuario) {
+            $existeUsuario = Master::where('id_usuario', $usuario->id)->first();
+            foreach ($request->datos as $dato) {
+                if ($existeUsuario) {
+                    Master::where('id_usuario', $usuario->id)->where('id_producto', $dato["id"])->update([
+                        'cantidad' => $dato["stock"]
+                    ]);
+                } else {
+                    Master::create([
+                        'id_producto' => $dato["id"],
+                        'id_usuario' => $usuario->id,
+                        'cantidad' => $dato["stock"]
+                    ]);
+                }
             }
         }
     }
 
     public function getMaster()
     {
-        $usuarios = Usuario::leftJoin('master', 'usuario.id', '=', 'master.id_usuario')
-            ->select('usuario.id', 'usuario.usuario', 'master.cantidad as stock')
-            ->where('usuario.rol', 2)
+        $productos = Producto::leftJoin('master', 'productos.id', '=', 'master.id_producto')
+            ->select('productos.id', 'productos.nombre', 'master.cantidad as stock')
             ->get()
-            ->map(function ($usuario) {
+            ->map(function ($producto) {
                 // Si no tiene stock en master, asigna 0
-                if (is_null($usuario->stock)) {
-                    $usuario->stock = 0;
+                if (is_null($producto->stock)) {
+                    $producto->stock = 0;
                 }
-                return $usuario;
+                return $producto;
             });
-        return json_encode($usuarios);
+        return json_encode($productos);
     }
 
     public function getMasterUsuario(Request $request)
     {
-        $stock = Master::where('id_usuario', $request->id)->first();
-        return $stock->cantidad;
+        $stocks = 0;
+        $productos = Master::where('id_usuario', $request->id)->get();
+        foreach ($productos as $producto) {
+            $stocks += $producto->cantidad;
+        }
+        return $stocks;
     }
 
     public function updateDepositoTaxiGrupo(Request $request)
@@ -277,9 +285,14 @@ class AdminController extends Controller
 
     public function updateCampoUsuario(Request $request)
     {
-        GrupoUsuarioProducto::where('id_grupo_usuario', $request->idUsuario)->update([
-            'stock' => $request->campo
-        ]);
+        $productos = json_decode($request->data);
+        foreach ($productos as $producto) {
+            preg_match('/\d+/', $producto->stock_id, $matches);
+            $idProducto = $matches[0] ?? null;
+            GrupoUsuarioProducto::where('id_grupo_usuario', $request->idUsuario)
+                ->where('id_producto', $idProducto)
+                ->update(['stock' => $producto->stock_value]);
+        }
     }
 
     public function getDetalleVendedor(Request $request)
@@ -323,9 +336,15 @@ class AdminController extends Controller
     {
         $ventas = Venta::select('venta.id', 'venta.nombre', 'usuario.usuario')
             ->join('usuario', 'usuario.id', '=', 'venta.id_usuario')
-            ->whereDate('venta.fecha', now())
             ->where('venta.es_contado', 0)
             ->get();
         return response()->json($ventas);
+    }
+
+    public function buscarUsuarios(Request $request)
+    {
+        $query = $request->input('query');
+        $usuarios = Usuario::where('usuario', 'LIKE', "%{$query}%")->where('rol', 2)->get();
+        return response()->json($usuarios);
     }
 }

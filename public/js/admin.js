@@ -911,12 +911,12 @@ $(document).ready(function() {
         $('#masterModal').modal('show');
         $.get(urlGetMaster,
             function (data, textStatus, jqXHR) {
-                let usuarios = JSON.parse(data);
+                let productos = JSON.parse(data);
                 let tbody = "";
-                $.each(usuarios, function (i, v) { 
+                $.each(productos, function (i, v) { 
                     tbody += "<tr>";
                     tbody += `<th scope="row">${ i + 1 }</th>`;
-                    tbody += `<th scope="row">${capitalizeFirstLetter(v.usuario)}</th>`;
+                    tbody += `<th scope="row">${capitalizeFirstLetter(v.nombre)}</th>`;
                     tbody += `<td><div class="cardm"><input type="number" class="form-control stockMaster" data-idUsuario='${v.id}' inputmode="numeric" value="${v.stock}">
                               </div></td></th>`;
                     tbody += `</tr>`;
@@ -977,22 +977,72 @@ $(document).ready(function() {
         });
     });
 
-    $('#miTabla').on('blur', '.campoEdit', function() {
-        let idGrupo = $('#idGrupoView').val();
-        let campo = $(this).text().trim();
+    $('#miTabla').on('click', '.campoEdit', function() {
         let idUser = $(this).data('id');
-        $.post(urlUpdateCampoUsuario, {
-            _token: token,
-            idGrupo: idGrupo,
-            idUsuario: idUser,
-            campo: campo
-        }, function(data, textStatus, jqXHR) {
-            // Manejar la respuesta del servidor si es necesario
-            Swal.fire("Actualizado");
-        }).fail(function(xhr, status, error) {
-            console.error('Error al actualizar:', error);
-            Swal.fire("Error al actualizar");
-        });
+        let idGrupo = $(this).data('grupo');
+        $('#exampleModal').modal('hide');
+        $.post(urlGetProductoMaster,{_token: token, idUser: idUser},
+            function(data, textStatus, jqXHR) {
+                let html = `<div class="productos-container">`;
+                $.each(data, function(i, v) {
+                    html += `
+                        <div class="grid-container">
+                            <div class="grid-item"> 
+                                <span>${v.nombre}:</span>
+                            </div>
+                            <div class="cardm grid-item">
+                                <input type="text" class="form-control" id="stock-${v.id}" value="${v.cantidad}">
+                            </div>
+                        </div>`;
+                });
+                html += `</div>`;
+                // Mostrar SweetAlert con el contenido generado
+                Swal.fire({
+                    title: "<strong>Agregar productos</strong>",
+                    icon: "info",
+                    html: html,
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: `Guardar`,
+                    cancelButtonText: `Cerrar`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let postData = [];
+                        $('.productos-container .grid-container').each(function() {
+                            let stockId = $(this).find('.cardm input[type="text"]:first').attr('id');
+                            let stockValue = $(this).find('.cardm input[type="text"]:first').val();
+                            postData.push({
+                                stock_id: stockId,
+                                stock_value: stockValue,
+                            });
+                        });
+                        $.post(urlUpdateCampoUsuario, {_token: token, idUsuario: idUser, data:JSON.stringify(postData)},
+                            function (data, textStatus, jqXHR) {
+                                visualizarGrupo(idGrupo);
+                            },
+                        );
+                    } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        visualizarGrupo(idGrupo);
+                    }
+                });
+            },
+        );
+        // $.post(urlUpdateCampoUsuario, {
+        //     _token: token,
+        //     idGrupo: idGrupo,
+        //     idUsuario: idUser,
+        //     campo: campo
+        // }, function(data, textStatus, jqXHR) {
+        //     // Manejar la respuesta del servidor si es necesario
+        //     Swal.fire("Actualizado");
+        // }).fail(function(xhr, status, error) {
+        //     console.error('Error al actualizar:', error);
+        //     Swal.fire("Error al actualizar");
+        // });
     });
 
     $('#miTabla').on('click', '.detalleVendedor', function() {
@@ -1070,6 +1120,192 @@ $(document).ready(function() {
             },
         );
     });
+
+    $('#cuadreGeneral').click(function (){
+        $('#cuadreGeneralModal').modal('show');
+    });
+    
+    $('#estadistica').click(function (){
+        $('#estadisticasModal').modal('show');
+    });
+
+    $('#buscarUsuario').on('input', function() {
+        let query = $(this).val();
+
+        if (query.length > 0) {
+            $.ajax({
+                url: urlBuscarUsuarios,
+                type: 'GET',
+                data: { query: query },
+                success: function(data) {
+                    $('#resultList').empty();
+                    if (data.length > 0) {
+                        data.forEach(function(usuario) {
+                            $('#resultList').append('<li class="list-group-item">' + usuario.usuario + '</li>');
+                        });
+                    } else {
+                        $('#resultList').append('<li class="list-group-item">No se encontraron resultados</li>');
+                    }
+                }
+            });
+        } else {
+            $('#resultList').empty();
+        }
+    });
+
+    $(document).on('click', '#resultList li', function() {
+        let selectedText = $(this).text();
+        $('#buscarUsuario').val(selectedText);
+        $('#resultList').empty();
+    });
+
+    var lineChart = null; // Variable para almacenar el objeto Chart del Line Chart
+    var pieChart1 = null; // Variable para almacenar el objeto Chart del Pie Chart 1
+    var pieChart2 = null; // Variable para almacenar el objeto Chart del Pie Chart 2
+
+    $('#fechaRango').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD',
+            separator: ' a ',
+            applyLabel: 'Aplicar',
+            cancelLabel: 'Cancelar',
+            fromLabel: 'Desde',
+            toLabel: 'Hasta',
+            customRangeLabel: 'Personalizado',
+            daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            firstDay: 1
+        }
+    });
+
+     // Manejar el clic en el botón de filtrar
+     $('#btnFiltrar').click(function() {
+        // Obtener el rango de fechas seleccionado
+        var fechaInicio = $('#fechaRango').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        var fechaFin = $('#fechaRango').data('daterangepicker').endDate.format('YYYY-MM-DD');
+        console.log('Filtrar por rango de fechas:', fechaInicio, 'a', fechaFin);
+
+        // Destruir los gráficos existentes si ya se han creado
+        destruirGraficos();
+
+        // Actualizar los gráficos con el nuevo rango de fechas
+        actualizarLineChart(fechaInicio, fechaFin);
+        actualizarPieCharts();
+    });
+
+    // Función para destruir los gráficos existentes
+    function destruirGraficos() {
+        if (lineChart) {
+            lineChart.destroy();
+        }
+        if (pieChart1) {
+            pieChart1.destroy();
+        }
+        if (pieChart2) {
+            pieChart2.destroy();
+        }
+    }
+
+    // Función para actualizar el Line Chart
+    function actualizarLineChart(fechaInicio, fechaFin) {
+        // Implementa la lógica para actualizar el Line Chart con las fechas seleccionadas
+        var ctx = document.getElementById('lineChart').getContext('2d');
+        lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: generarLabelsFechas(fechaInicio, fechaFin),
+                datasets: [{
+                    label: 'Datos de ejemplo',
+                    data: generarDatosEjemplo(),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    // Función para generar los días de la semana según el rango de fechas seleccionado
+    function generarLabelsFechas(fechaInicio, fechaFin) {
+        var labels = [];
+        var fechaActual = new Date(fechaInicio);
+        var fechaFinal = new Date(fechaFin);
+        while (fechaActual <= fechaFinal) {
+            if (fechaActual.getDay() !== 0) {
+                var diaSemana = obtenerNombreDiaSemana(fechaActual.getDay());
+                var fechaFormato = fechaActual.getDate();
+                labels.push(`${diaSemana}${fechaFormato}`);
+            }
+            fechaActual.setDate(fechaActual.getDate() + 1);
+        }
+        return labels;
+    }
+
+    // Función auxiliar para obtener el nombre del día de la semana
+    function obtenerNombreDiaSemana(numeroDia) {
+        var diasSemana = ['LU', 'MT', 'MC', 'JV', 'VR', 'SB'];
+        return diasSemana[numeroDia - 1];
+    }
+
+    // Función para generar datos de ejemplo para el Line Chart
+    function generarDatosEjemplo() {
+        return [12, 19, 3, 5, 2, 8]; // Datos de ejemplo
+    }
+
+    // Función para actualizar los Pie Charts
+    function actualizarPieCharts() {
+        // Implementa la lógica para actualizar los Pie Charts con las fechas seleccionadas
+        var ctx1 = document.getElementById('pieChart1').getContext('2d');
+        pieChart1 = new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: ['Categoria 1', 'Categoria 2', 'Categoria 3'],
+                datasets: [{
+                    label: 'Datos de ejemplo',
+                    data: [30, 20, 50], // Datos de ejemplo
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        var ctx2 = document.getElementById('pieChart2').getContext('2d');
+        pieChart2 = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Categoria A', 'Categoria B', 'Categoria C'],
+                datasets: [{
+                    label: 'Datos de ejemplo',
+                    data: [40, 30, 30], // Datos de ejemplo
+                    backgroundColor: ['#4BC0C0', '#36A2EB', '#FFCE56'],
+                    borderWidth: 1
+                }]
+            }
+        });
+    }
+
+    // caja chica
+    $('#cajaChica').click(function (){
+        $('#cajaChicaModal').modal('show');
+    });
+
+    // descuento
+    $('#descuento').click(function (){
+        $('#descuentoModal').modal('show');
+    });
+
+    $('#comision').click(function (){
+        $('#comisionModal').modal('show');
+    });
 });
 
 function visualizarGrupo(id){
@@ -1092,7 +1328,7 @@ function visualizarGrupo(id){
                 totalSobrante += v.sobrantes;
                 tbody += `<tr>
                             <td style="text-align: center; cursor: pointer;" class="detalleVendedor" data-id="${v.id}">${v.usuario}<br>${fecha}</td>
-                            <td class="table-warning campoEdit" style="text-align: center" data-id="${v.id}" contenteditable="true">${v.campo}</td>
+                            <td class="table-warning campoEdit" style="text-align: center; cursor: pointer;" data-grupo="${id}" data-id="${v.id}">${v.campo}</td>
                             <td cstyle="text-align: center">${v.vendidos}</td>
                             <td style="text-align: center">${v.sobrantes}</td>
                         </tr>`;

@@ -22,7 +22,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="{{ asset('css/usuario.css') }}">
+    <link rel="stylesheet" href="http://45.140.185.22/mielolivos/mielolivos/public/css/usuario.css">
 </head>
 
 <body>
@@ -37,7 +37,7 @@
             <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
                 aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Menú</h5>
+                    <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Men&uacute;</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
                 </div>
@@ -49,7 +49,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="{{ route('logout') }}">Cerar
-                                Sesión</a>
+                                Sesi&oacute;n</a>
                         </li>
                     </ul>
                 </div>
@@ -59,6 +59,14 @@
     <main>
         @yield('content')
     </main>
+    <script>
+        let token = "{{ csrf_token() }}";
+        let urlDetalleVenta = "{{ route('detalleVenta') }}";
+        let ruta = "{{ asset('storage/signatures') }}";
+        let urlSavePago = "{{ route('savePago') }}";
+        let urlUpdateEstadoVenta = "{{ route('updateEstadoVenta') }}";
+        let urlFilter = '{{ route('filter') }}';
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
@@ -66,7 +74,7 @@
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <script src="{{ asset('js/cobrador.js') }}"></script>
+    <script src="http://45.140.185.22/mielolivos/mielolivos/public/js/cobrador.js"></script>
 </body>
 
 </html>

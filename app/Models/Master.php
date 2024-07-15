@@ -13,6 +13,7 @@ class Master extends Model
     protected $table = 'master';
 
     protected $fillable = [
+        'id_producto',
         'id_usuario',
         'cantidad',
     ];
@@ -20,5 +21,10 @@ class Master extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'id_producto', 'id');
     }
 }

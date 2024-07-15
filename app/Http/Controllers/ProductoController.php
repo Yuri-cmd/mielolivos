@@ -6,6 +6,9 @@ use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Imports\ProductosImport;
+use App\Models\GrupoUsuario;
+use App\Models\GrupoUsuarioProducto;
+use App\Models\Master;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductoController extends Controller
@@ -105,5 +108,22 @@ class ProductoController extends Controller
         Excel::import(new ProductosImport, $request->file('file'));
 
         return redirect()->back()->with('success', 'Productos importados correctamente.');
+    }
+
+    public function getProductoMaster(Request $request)
+    {
+        $results = GrupoUsuarioProducto::where('id_grupo_usuario', $request->idUser)
+            ->with('producto:id,nombre')
+            ->get(['id', 'id_producto', 'stock']);
+        
+        // Formatear los resultados
+        $formattedResults = $results->map(function ($master) {
+            return [
+                'id' => $master->producto->id,
+                'nombre' => $master->producto->nombre,
+                'cantidad' => $master->stock,
+            ];
+        });
+        return response()->json($formattedResults);
     }
 }

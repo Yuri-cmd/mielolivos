@@ -319,7 +319,7 @@ input[type="number"] {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(10, auto);
 }
 
@@ -330,6 +330,19 @@ input[type="number"] {
     width: 100%;
 }
 
+#resultList {
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+}
+
+#resultList li {
+    cursor: pointer;
+}
+
+#resultList li:hover {
+    background-color: #f0f0f0;
+}
 
 @media (max-width: 768px) {
     .contenedor-buttons {

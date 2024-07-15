@@ -12,10 +12,10 @@
         </div>
         <div class="mt-3 mb-3 content-buttons">
             <div>
-                <button type="button" class="btn btn-light">1RA Cuota</button>
+                <button type="button" class="btn btn-light" id="filter-cuota1">1RA Cuota</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light">2DA Cuota</button>
+                <button type="button" class="btn btn-light" id="filter-cuota2">2DA Cuota</button>
             </div>
             <div>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
@@ -34,14 +34,16 @@
                 </thead>
                 <tbody>
                     @foreach ($ventas as $i => $venta)
-                        <tr onclick="mostrar()" style="cursor: pointer;">
+                        <tr onclick="mostrar({{ $venta->id }})" style="cursor: pointer;">
                             <th scope="row">{{ $i + 1 }}</th>
                             <td>
                                 <span>{{ $venta->nombre }}</span> <br>
                                 <small>{{ $venta->usuario }}</small>
                             </td>
-                            <td><span class="badge text-bg-secondary">{{ $venta->deuda }}</span></td>
-                            <td><span class="badge {{colorVencimiento($venta->dias_desde_venta)}}">{{ $venta->dias_desde_venta }}</span></td>
+                            <td><span class="badge {{colorPago($venta->deuda - $venta->total_pagos)}}">{{ $venta->deuda - $venta->total_pagos }}</span></td>
+                            <td><span
+                                    class="badge {{ $venta->color_vencimiento }}">{{ $venta->dias_desde_venta }}</span>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -60,79 +62,74 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="number" id="idVenta" hidden>
                     <div class="sales-summary">
                         <div class="header-info mb-2" style="">
                             <span>Asesor: <a href="tel:+521234567890"
-                                    style="font-weight: bold; text-decoration: underline; color: black;">Jorge
+                                    style="font-weight: bold; text-decoration: underline; color: black;"
+                                    id="asesor">Jorge
                                     Bernal</a></span>
-                            <span>{{ $fecha }}</span>
+                            <span id="fechaVenta"></span>
                         </div>
                         <div class="mb-4">
                             <div>
-                                <h4 class="text-center">LUIS ALBERTO SOTIL GUERRERO</h4>
+                                <h4 class="text-center" id="cliente"></h4>
                             </div>
                             <div class="text-center">
-                                <h5>JR Tritoma 296 / Urb. El Rosario</h5>
+                                <h5><span id="jr"></span> / <span id="urb"></span></h5>
                             </div>
                             <div class="text-center">
-                                <span style="font-weight: bold; text-decoration: underline;">Piso:</span>
-                                <span>1</span>
-                                <span style="font-weight: bold; text-decoration: underline;">/ N° Pisos:</span>
-                                <span>3</span>
-                                <span style="font-weight: bold; text-decoration: underline;">/ Color:</span>
-                                <span>Verde</span>
+                                <span style="font-weight: bold; text-decoration: underline;" id="piso"></span> /
+                                <span style="font-weight: bold; text-decoration: underline;" id="pisos"></span> /
+                                <span style="font-weight: bold; text-decoration: underline;" id="color"></span>
                             </div>
                             <div class="text-center">
                                 <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>
-                                <span>3RA PUERTA MARRÓN</span>
+                                <span id="tocar">3RA PUERTA MARRÓN</span>
                             </div>
                         </div>
                         <div class="text-center">
                             <h4 style="font-weight: bold; text-decoration: underline;">
-                                <a href="tel:+521234567890" style="text-decoration: none; color: black">927300123</a>
+                                <a href="tel:+521234567890" style="text-decoration: none; color: black" id="telefono"></a>
                             </h4>
                         </div>
                         <ul class="list-unstyled" style="margin: 0;">
-                            <li><span>2 MIEL</span> <span>S/50.00</span></li>
-                            <li><span>1 COLAGENO</span><span>S/25.00</span></li>
-                            <li><span>4 MACA NEGRA</span><span>S/100.00</span></li>
-                            <li><span>5 PROPOLEO</span><span>S/125.00</span></li>
+
                         </ul>
-                        <p class="text-end fw-bold" style="margin-top: -10px;">S/300.00</p>
+                        <p class="text-end fw-bold" style="margin-top: -10px;" id="total"></p>
                     </div>
                     <div class="payment-details">
                         <div class="row text-center">
                             <div class="col cuotas">
                                 <span>ADELANTO</span>
-                                <span>
-                                    {{ $formatoFecha }}
-                                </span>
+                                <span id="fecha1"></span>
                             </div>
                             <div class="col cuotas">
                                 <span>1RA CUOTA</span>
-                                <span>
-                                    {{ $formatoFecha1 }}
-                                </span>
+                                <span id="fecha2"></span>
                             </div>
                             <div class="col cuotas">
                                 <span>2DA CUOTA</span>
-                                <span>
-                                    {{ $formatoFecha2 }}
-                                </span>
+                                <span id="fecha3"></span>
                             </div>
                             {{-- <div class="col">Pendiente</div> --}}
                         </div>
                         <div class="row text-center" style="margin-top: -10px;">
-                            <div class="col"><input type="number" class="form-control" value="120"></div>
-                            <div class="col"><input type="number" class="form-control" value="100"></div>
-                            <div class="col"><input type="number" class="form-control" value="80"></div>
+                            <div class="col"><input type="number" class="form-control" id="cuota1" readonly></div>
+                            <div class="col"><input type="number" class="form-control" id="cuota2" readonly></div>
+                            <div class="col"><input type="number" class="form-control" id="cuota3" readonly></div>
                             {{-- <div class="col"><input type="number" class="form-control" value="180"></div> --}}
                         </div>
                         <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
                             <div style="display: flex; justify-content: center;">
                                 <label for="firma">Firma:</label>
-                                <canvas id="signature-pad" class="signature-pad" width="400" height="200"></canvas>
+                                <img id="firma" src='' alt="" width="300" height="200">
                             </div>
+                        </div>
+                        <input type="text" id="restante" value="" hidden>
+                        <div class="mt-3" id="abonoform">
+                            <label for="abono">Monto del abono</label>
+                            <input type="number" class="form-control" id="abono" min="1" required>
                         </div>
                         <div class="table-responsive" style="margin-top:10px;">
                             <table class="table">
@@ -143,36 +140,18 @@
                                         <th>Pendiente</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Sabado 25 Mayo 2024</td>
-                                        <td><span class="precios-cobrador">25</span></td>
-                                        <td><span class="precios-cobrador">100</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lunes 27 Mayo 2024</td>
-                                        <td><span class="precios-cobrador">10</span></td>
-                                        <td><span class="precios-cobrador">90</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lunes 04 Junio 2024</td>
-                                        <td><span class="precios-cobrador">20</span></td>
-                                        <td><span class="precios-cobrador">70</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sabado 09 Junio 2024</td>
-                                        <td><span class="precios-cobrador">70</span></td>
-                                    </tr>
+                                <tbody id="payment-table-body">
+
                                 </tbody>
                             </table>
                         </div>
-                        <div style="text-align: center;">
+                        <div style="text-align: center; display: none;" id="cancelado">
                             <h2 style="font-weight: bold; color: red;">CANCELADO</h2>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atrás</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-primary" id="submit">Guardar</button>
                 </div>
             </div>

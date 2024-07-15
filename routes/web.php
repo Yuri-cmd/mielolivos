@@ -29,7 +29,7 @@ Route::get('/cobrador/dashboard', [CobradorController::class, 'index'])->name('c
 Route::get('/admin/get-master', [AdminController::class, 'getMaster'])->name('getMaster');
 Route::post('/admin/get-master-usuario', [AdminController::class, 'getMasterUsuario'])->name('getMasterUsuario');
 Route::post('/admin/save-master', [AdminController::class, 'saveMaster'])->name('masterStock');
-Route::post('/admin/save-master', [AdminController::class, 'saveMaster'])->name('masterStock');
+Route::post('/admin/get-master-producto', [ProductoController::class, 'getProductoMaster'])->name('getProductoMaster');
 
 // Almancen
 Route::get('/admin/almacen', [AdminController::class, 'almacen'])->name('almacen');
@@ -65,3 +65,12 @@ Route::post('/admin/detalle/vendedor', [AdminController::class, 'getDetalleVende
 //Vendedor
 Route::post('/vendedor/saveVenta', [VendedorController::class, 'saveVenta'])->name('saveVenta');
 Route::get('/vendedor/venta/{id}', [VendedorController::class, 'seeVenta'])->name('seeVenta');
+
+//Cobrador
+Route::post('/cobrador/detalle/venta', [CobradorController::class, 'detalleVenta'])->name('detalleVenta');
+Route::post('/cobrador/save/pago', [CobradorController::class, 'savePago'])->name('savePago');
+Route::post('/cobrador/update/venta', [CobradorController::class, 'updateEstadoVenta'])->name('updateEstadoVenta');
+Route::get('/ventas/filter', [CobradorController::class, 'filter'])->name('filter');
+
+//Estadisticas
+Route::get('/buscar-usuarios', [AdminController::class, 'buscarUsuarios'])->name('buscar.usuarios');
