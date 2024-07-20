@@ -12,19 +12,19 @@
         <div class="container">
             <div class="header">
                 <div class="header-info">
-                    <span>Asesor: {{ ucwords(Session::get('usuario')) }}</span>
-                    <span>{{ $fecha }}</span>
+                    <span style="font-weight: bold;">Asesor: {{ ucwords(Session::get('usuario')) }}</span>
+                    <span style="font-weight: bold;">{{ $fecha }}</span>
                 </div>
                 <div class="header-detalle">
-                    <h5>Ventas del D&iacute;a</h5>
-                    <h5 style="margin-left: 10px;">{{ $cantidadVentas }}</h5>
+                    <h5 style="font-weight: bold;">Ventas del D&iacute;a</h5>
+                    <h5 style="margin-left: 10px;font-weight: bold;">{{ $cantidadVentas }}</h5>
                 </div>
             </div>
             <hr>
             <div class="sales">
                 <div class="row">
                     @foreach ($productos1 as $p)
-                        <div class="cell">{{ $p->abreviatura }}</div>
+                        <div class="cell" style="font-weight: bold;">{{ $p->abreviatura }}</div>
                     @endforeach
                 </div>
                 <div class="row">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="row">
                     @foreach ($productos2 as $p)
-                        <div class="cell">{{ $p->abreviatura }}</div>
+                        <div class="cell" style="font-weight: bold;">{{ $p->abreviatura }}</div>
                     @endforeach
                 </div>
                 <div class="row">
@@ -53,53 +53,53 @@
             <hr>
             <div class="customer-info">
                 <div class="col-sm">
-                    <label for="Nombre">Nombres y Apellidos</label>
+                    <label for="Nombre" style="font-weight: bold;">Nombres y Apellidos</label>
                     <input type="text" class="form-control" id="nombre" value="" required />
                 </div>
                 <div class="row g-3">
                     <div class="col-sm" style="text-align: center;">
-                        <label for="MZ">MZ</label>
+                        <label for="MZ" style="font-weight: bold;">MZ</label>
                         <input type="text" class="form-control" id="mz" placeholder="Mz" aria-label="Mz">
                     </div>
                     <div class="col-sm" style="text-align: center;">
-                        <label for="Lt">Lt</label>
+                        <label for="Lt" style="font-weight: bold;">Lt</label>
                         <input type="text" class="form-control" id="lt" placeholder="Lt" aria-label="Lt">
                     </div>
                     <div class="col-sm-7" style="text-align: center;">
-                        <label for="Jr./Calle">Jr./Calle</label>
+                        <label for="Jr./Calle" style="font-weight: bold;">Jr./Calle</label>
                         <input type="text" class="form-control" id="jr" placeholder="Jr./Calle"
                             aria-label="Jr./Calle">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm" style="text-align: center;">
-                        <label for="Piso">Piso</label>
+                        <label for="Piso" style="font-weight: bold;">Piso</label>
                         <input type="text" class="form-control" id="piso" placeholder="Piso" aria-label="Piso">
                     </div>
                     <div class="col-sm" style="text-align: center;">
-                        <label for="N&deg; Pisos">N&deg; Pisos</label>
+                        <label for="N&deg; Pisos" style="font-weight: bold;">N&deg; Pisos</label>
                         <input type="text" class="form-control" id="pisos" placeholder="N&deg; Pisos"
                             aria-label="N&deg; Pisos">
                     </div>
                     <div class="col-sm-7" style="text-align: center;">
-                        <label for="Urbanizaci&oacute;n">Urbanizaci&oacute;n</label>
+                        <label for="Urbanizaci&oacute;n" style="font-weight: bold;">Urbanizaci&oacute;n</label>
                         <input type="text" class="form-control" id="urb" placeholder="Urbanizaci&oacute;n"
                             aria-label="Urbanizaci&oacute;n">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm" style="text-align: center;">
-                        <label for="Color">Color</label>
+                        <label for="Color" style="font-weight: bold;">Color</label>
                         <input type="text" class="form-control" id="color" placeholder="Color" aria-label="Color">
                     </div>
                     <div class="col-sm" style="text-align: center;">
-                        <label for="Tocar">Tocar</label>
+                        <label for="Tocar" style="font-weight: bold;">Tocar</label>
                         <input type="text" class="form-control" id="tocar" placeholder="Tocar"
                             aria-label="Tocar">
                     </div>
                 </div>
                 <div class="col-sm">
-                    <label for="Tel&eacute;fono">Tel&eacute;fono</label>
+                    <label for="Tel&eacute;fono" style="font-weight: bold;">Tel&eacute;fono</label>
                     <input type="text" class="form-control" id="tel" placeholder="Tel&eacute;fono"
                         aria-label="Tel&eacute;fono">
                 </div>
@@ -127,7 +127,11 @@
                                 <h4 class="text-center" id="nombreCliente"></h4>
                             </div>
                             <div class="text-center">
-                                <h5 id="direccionT"></h5>
+                                <h5><span id="jrT"></span>/ <span id="mzT"></span>/ <span id="lotT"></span> / <span id="urbT"></span></h5>
+                            </div>
+                            <div class="text-center">
+                                <span style="font-weight: bold; text-decoration: underline;" id="pisoT"></span> /
+                                <span style="font-weight: bold; text-decoration: underline;" id="pisosT"></span>
                             </div>
                             <div class="text-center">
                                 <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>

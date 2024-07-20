@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
@@ -81,8 +83,19 @@
         let urlGetVentas = "{{ route('getVentas') }}";
         let urlGetProductoMaster = "{{ route('getProductoMaster') }}";
         let urlBuscarUsuarios = "{{ route('buscar.usuarios') }}";
+        let urlDetalleVenta = "{{ route('detalleVenta') }}";
+        let urlSaveCajaChica = "{{ route('saveCajaChica') }}";
+        let urlGetCajaChica = "{{ route('getCajaChica') }}";
+        let urlUpdateSaldoCajaChica = "{{ route('updateSaldoCajaChica') }}";
     </script>
-
+    <div style="display: flex; justify-content: space-around">
+        <div>
+            <a type="button" class="btn btn-primary">Primary</a>
+        </div>
+        <div>
+            <a type="button" class="btn btn-secondary">Secondary</a>
+        </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

@@ -14,6 +14,7 @@ class Venta extends Model
 
     protected $fillable = [
         'id_usuario',
+        'id_grupo',
         'nombre',
         'mz',
         'lt',

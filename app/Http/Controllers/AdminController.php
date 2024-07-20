@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CajaChica;
+use App\Models\CajaChicaSaldo;
 use App\Models\Grupo;
 use App\Models\GrupoUsuario;
 use App\Models\GrupoUsuarioProducto;
@@ -346,5 +348,42 @@ class AdminController extends Controller
         $query = $request->input('query');
         $usuarios = Usuario::where('usuario', 'LIKE', "%{$query}%")->where('rol', 2)->get();
         return response()->json($usuarios);
+    }
+
+    public function getCajaChica()
+    {
+        [$fechaInicio, $fechaFin] = getWeekIntervalNumber();
+        $caja = CajaChica::whereBetween('fecha', [$fechaInicio, $fechaFin])->get();
+        $saldo = CajaChicaSaldo::where('fechaInicio', $fechaInicio)->where('fechaFin', $fechaFin)->get();
+        return response()->json(["caja" => $caja, "saldo" => $saldo]);
+    }
+
+    public function saveCajaChica(Request $request)
+    {
+        CajaChica::create([
+            'nombre' => $request->input('nombreGasto'),
+            'monto' => $request->input('montoCaja'),
+        ]);
+    }
+
+    public function updateSaldoCajaChica(Request $request)
+    {
+        [$fechaInicio, $fechaFin] = getWeekIntervalNumber();
+        $registros = CajaChicaSaldo::where('fechaInicio', $fechaInicio)->where('fechaFin', $fechaFin)->get();
+        $saldo = $request->saldo;
+        if(strpos($request->saldo, 'S/') !== false){
+            $saldo = explode('S/', $request->saldo);
+            $saldo = $saldo[1];
+        }
+        if ($registros->isEmpty()) {
+            $cajaChica = new CajaChicaSaldo();
+            $cajaChica->saldo = $saldo;
+            $cajaChica->fechaInicio = $fechaInicio;
+            $cajaChica->fechaFin = $fechaFin;
+            $cajaChica->save();
+        }else{
+            $registros->saldo = $saldo;
+            $registros->save();
+        }
     }
 }

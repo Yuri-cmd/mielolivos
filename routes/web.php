@@ -50,7 +50,7 @@ Route::post('/admin/cobradores', [AdminController::class, 'createCobrador'])->na
 Route::post('/admin/delete/cobrador', [AdminController::class, 'deleteCobrador'])->name('deleteCobrador');
 
 //buscador 
-Route::get('/admin/buscador',[AdminController::class, 'getVentas'])->name('getVentas');
+Route::get('/admin/buscador', [AdminController::class, 'getVentas'])->name('getVentas');
 
 //Grupos
 Route::post('/admin/grupos', [AdminController::class, 'createGrupo'])->name('createGrupo');
@@ -74,3 +74,8 @@ Route::get('/ventas/filter', [CobradorController::class, 'filter'])->name('filte
 
 //Estadisticas
 Route::get('/buscar-usuarios', [AdminController::class, 'buscarUsuarios'])->name('buscar.usuarios');
+
+//Caja Chica
+Route::post('saveCajaChica', [AdminController::class, 'saveCajaChica'])->name('saveCajaChica');
+Route::get('getCajaChica', [AdminController::class, 'getCajaChica'])->name('getCajaChica');
+Route::post('UpdateSaldoCajaChica', [AdminController::class, 'updateSaldoCajaChica'])->name('updateSaldoCajaChica');

@@ -121,3 +121,27 @@ if (!function_exists('getWeekInterval')) {
         return "$startFormatted al $endFormatted de $monthFormatted";
     }
 }
+if (!function_exists('getWeekIntervalNumber')) {
+    function getWeekIntervalNumber()
+    {
+        $date = new DateTime();
+        $startOfWeek = clone $date;
+        $endOfWeek = clone $date;
+
+        // Obtener el día de la semana (1 para Lunes, 7 para Domingo)
+        $dayOfWeek = $date->format('N');
+
+        // Calcular el inicio de la semana (Lunes)
+        $startOfWeek->modify('-' . ($dayOfWeek - 1) . ' days');
+
+        // Calcular el final de la semana (Sábado)
+        $endOfWeek->modify('+' . (6 - $dayOfWeek + 1) . ' days');
+
+        // Formatear las fechas en formato YYYY/MM/DD
+        $startFormatted = $startOfWeek->format('Y/m/d');
+        $endFormatted = $endOfWeek->format('Y/m/d');
+
+        // Retornar el resultado formateado
+        return [$startFormatted, $endFormatted];
+    }
+}

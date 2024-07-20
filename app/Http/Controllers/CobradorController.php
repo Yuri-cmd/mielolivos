@@ -107,8 +107,20 @@ class CobradorController extends Controller
         $cuotas = DB::table('cuotas')->where('id_venta', $venta->id)->get();
 
         [$fecha, $formatoFecha, $formatoFecha1, $formatoFecha2] = fechas($venta->fecha);
-
-        $pagos = Pago::where('id_cobrador', $this->id)->where('id_venta', $request->id)->get();
+        if(Session::get('rol') == 1){
+            $idCobrador = DB::select("SELECT
+                                u.id 
+                            FROM
+                                grupos g
+                                INNER JOIN grupo_usuario gu ON gu.id_grupo = g.id
+                                INNER JOIN usuario u ON u.id = gu.id_usuario 
+                            WHERE
+                                g.id = {$venta->id_grupo}
+                                and u.rol = 3");
+            $pagos = Pago::where('id_cobrador', $idCobrador[0]->id)->where('id_venta', $request->id)->get();
+        }else{
+            $pagos = Pago::where('id_cobrador', $this->id)->where('id_venta', $request->id)->get();
+        }
         return response()->json(compact("venta", "vendedor", "detalle", "cuotas", "formatoFecha", "formatoFecha1", "formatoFecha2", 'pagos'));
     }
 

@@ -3,28 +3,28 @@
     <div class="contenedor">
         <div class="contenedor-buttons">
             <div>
-                <button type="button" class="btn btn-light shadow" id="buscador">BUSCADOR G.</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="buscador">BUSCADOR G.</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow">VENTAS DE OFICINA</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow">VENTAS DE OFICINA</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow" id="comision">COMISIONES</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="comision">COMISIONES</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow" id="descuento">DESCUENTOS</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="descuento">DESCUENTOS</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow" id="estadistica">ESTADISTICAS</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="estadistica">ESTADISTICAS</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow" id="cuadreGeneral">CUADRE GENERAL</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="cuadreGeneral">CUADRE GENERAL</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow" id="cajaChica">CAJA CHICA</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="cajaChica">CAJA CHICA</button>
             </div>
             <div>
-                <button type="button" class="btn btn-light shadow" id="master">MASTER</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="master">MASTER</button>
             </div>
         </div>
         <div class="contenedor-dashboard">
@@ -32,7 +32,7 @@
                 <div class="seccion-uno">
                     <div class="contenedor-listado">
                         <div>
-                            <h5>ASOCIADOS</h5>
+                            <h5 class="fw-bold">ASOCIADOS</h5>
                         </div>
                         <div class="contenedor-agregar">
                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
@@ -52,7 +52,7 @@
                     </div>
                     <div class="contenedor-listado">
                         <div>
-                            <h5>GRUPOS</h5>
+                            <h5 class="fw-bold">GRUPOS</h5>
                         </div>
                         <div class="contenedor-agregar">
                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
@@ -74,7 +74,7 @@
                 </div>
                 <div class="contenedor-listado-bottom">
                     <div>
-                        <h5>COBRADORES</h5>
+                        <h5 class="fw-bold">COBRADORES</h5>
                     </div>
                     <div class="contenedor-agregar">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
@@ -96,7 +96,7 @@
             <div class="contenedor-grafica">
                 <div class="grafica">
                     <div>
-                        <h5>VENTAS DE LA SEMANA</h5>
+                        <h5 style="font-weight: bold;">VENTAS DE LA SEMANA</h5>
                     </div>
                     <div>
                         <canvas id="barHorizontal"></canvas>
@@ -430,6 +430,111 @@
         </div>
     </div>
 
+    <div class="modal fade" id="buscadorDetalle" tabindex="-1" aria-labelledby="buscadorDetalleLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="buscadorDetalleLabel">Detalle de Venta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="number" id="idVenta" hidden>
+                    <div class="sales-summary">
+                        <div class="header-info mb-2" style="">
+                            <span>Asesor: <a href="tel:+521234567890"
+                                    style="font-weight: bold; text-decoration: underline; color: black;"
+                                    id="asesor">Jorge
+                                    Bernal</a></span>
+                            <span id="fechaVenta"></span>
+                        </div>
+                        <div class="mb-4">
+                            <div>
+                                <h4 class="text-center" id="cliente"></h4>
+                            </div>
+                            <div class="text-center">
+                                <h5><span id="jr"></span> / <span id="urb"></span></h5>
+                            </div>
+                            <div class="text-center">
+                                <span style="font-weight: bold; text-decoration: underline;" id="piso"></span> /
+                                <span style="font-weight: bold; text-decoration: underline;" id="pisos"></span> /
+                                <span style="font-weight: bold; text-decoration: underline;" id="color"></span>
+                            </div>
+                            <div class="text-center">
+                                <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>
+                                <span id="tocar">3RA PUERTA MARRÓN</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h4 style="font-weight: bold; text-decoration: underline;">
+                                <a href="tel:+521234567890" style="text-decoration: none; color: black"
+                                    id="telefono"></a>
+                            </h4>
+                        </div>
+                        <ul class="list-unstyled" style="margin: 0;">
+
+                        </ul>
+                        <p class="text-end fw-bold" style="margin-top: -10px;" id="total"></p>
+                    </div>
+                    <div class="payment-details">
+                        <div class="row text-center">
+                            <div class="col cuotas">
+                                <span>ADELANTO</span><br>
+                                <span id="fecha1"></span>
+                            </div>
+                            <div class="col cuotas">
+                                <span>1RA CUOTA</span><br>
+                                <span id="fecha2"></span>
+                            </div>
+                            <div class="col cuotas">
+                                <span>2DA CUOTA</span><br>
+                                <span id="fecha3"></span>
+                            </div>
+                            {{-- <div class="col">Pendiente</div> --}}
+                        </div>
+                        <div class="row text-center" style="">
+                            <div class="col"><input type="number" class="form-control" id="cuota1" readonly>
+                            </div>
+                            <div class="col"><input type="number" class="form-control" id="cuota2" readonly>
+                            </div>
+                            <div class="col"><input type="number" class="form-control" id="cuota3" readonly>
+                            </div>
+                            {{-- <div class="col"><input type="number" class="form-control" value="180"></div> --}}
+                        </div>
+                        <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
+                            <div style="display: flex; justify-content: center;">
+                                <label for="firma">Firma:</label>
+                                <img id="firma" src='' alt="" width="300" height="200">
+                            </div>
+                        </div>
+                        <input type="text" id="restante" value="" hidden>
+                        <div class="table-responsive" style="margin-top:10px;">
+                            <table class="table">
+                                <thead style="text-align: center;">
+                                    <tr>
+                                        <th></th>
+                                        <th>Abono</th>
+                                        <th>Pendiente</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payment-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="text-align: center; display: none;" id="cancelado">
+                            <h2 style="font-weight: bold; color: red;">CANCELADO</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="submit">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Cuadre general --}}
     <div class="modal fade" id="cuadreGeneralModal" tabindex="-1" aria-labelledby="cuadreGeneralModalLabel"
         aria-hidden="true">
@@ -604,6 +709,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div style="display: flex; justify-content: end">
+                        <button type="button" class="btn btn-primary mb-2" id="agregarCaja">Agregar</button>
+                    </div>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -612,32 +720,8 @@
                                 <th scope="col">Total</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">Lu. 17 Junio</th>
-                                <td>Almuerzo Ronny, chino</td>
-                                <td>S/18</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Mart. 18 Junio</th>
-                                <td>Pasaje Ronny</td>
-                                <td>S/4</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">MArt. 18 Junio</th>
-                                <td>Poet</td>
-                                <td>S/2.5</td>
-                            </tr>
-                            <tr>
-                                <th scope="row"></th>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="row"></th>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                        <tbody id="cajadetalle">
+
                         </tbody>
                     </table>
                     <div style="display: flex; justify-content: space-between">
@@ -646,7 +730,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">SALDO</th>
-                                        <th scope="col">S/173.5</th>
+                                        <th scope="col" id="saldoCaja" class="table-warning" contenteditable="true">S/0.00</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -656,7 +740,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">TOTAL</th>
-                                        <th scope="col">S/26.5</th>
+                                        <th scope="col" id="montoCaja"></th>
                                     </tr>
                                 </thead>
                             </table>
@@ -669,7 +753,33 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="cajaInsert" tabindex="-1" aria-labelledby="cajaInserLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 fw-bold" id="cajaInserLabel">CAJA CHICA</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="nombreGasto" class="form-label">Nombre del gasto</label>
+                            <input type="text" class="form-control" id="nombreGasto" aria-describedby="emailHelp">
+                        </div>
+                        <div class="mb-3">
+                            <label for="monto" class="form-label">monto</label>
+                            <input type="number" class="form-control" id="cajamonto">
+                        </div>
+                        <div id="emailHelp" class="form-text" style="display:none;">Todos los campos son requeridos</div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" id="guardarCaja">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- DESCUENTOS --}}
     <div class="modal fade" id="descuentoModal" tabindex="-1" aria-labelledby="descuentoModalLabel"
         aria-hidden="true">
@@ -749,8 +859,7 @@
     </div>
 
     {{-- COMISIONES --}}
-    <div class="modal fade" id="comisionModal" tabindex="-1" aria-labelledby="comisionModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="comisionModal" tabindex="-1" aria-labelledby="comisionModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">

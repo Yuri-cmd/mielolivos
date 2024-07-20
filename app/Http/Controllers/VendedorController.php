@@ -78,6 +78,7 @@ class VendedorController extends Controller
         $es_contado = $tipo ? 1 : 0;
         $data = [
             'id_usuario' => $id_usuario,
+            'id_grupo' => $request->idGrupo,
             'nombre' => $request->input('datosVenta.nombre'),
             'mz' => $request->input('datosVenta.mz'),
             'lt' => $request->input('datosVenta.lt'),

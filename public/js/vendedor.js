@@ -18,19 +18,19 @@ $('#siguiente').click(function() {
             precio = parseFloat($(element).attr("data-precio")) * $(element).val();
             cantidad =  parseFloat($(element).val());
             stock = parseFloat($(element).attr("data-stock"));
-            if(cantidad > stock){
-                Swal.fire(`No puede asignar ${cantidad} ya que su stock para ${$(element).attr("data-nombre")} es de ${stock}`);
-                flagStock = true;
-            }
+            // if(cantidad > stock){
+            //     Swal.fire(`No puede asignar ${cantidad} ya que su stock para ${$(element).attr("data-nombre")} es de ${stock}`);
+            //     flagStock = true;
+            // }
             list += `<li><span>${$(element).val()} ${$(element).attr("data-nombre")}</span> <span>S/${precio}</span></li>`; 
             total += parseFloat($(element).attr("data-precio")) * $(element).val();
             flag = false;
         }
     }); 
 
-    if(flagStock){
-        return;
-    }
+    // if(flagStock){
+    //     return;
+    // }
 
     if(flag){
         Swal.fire("No se asignaron cantidades");
@@ -38,13 +38,18 @@ $('#siguiente').click(function() {
     }
     let nombre = $('#nombre').val();
     let tel = $('#tel').val();
-    let direccion = `${$('#jr').val()} ${$('#mz').val()} ${$('#lt').val()} ${$('#piso').val()} ${$('#pisos').val()} / ${$('#urb').val()}`;
+    let direccion = `${$('#jr').val()} ${$('#mz').val()} ${$('#lt').val()} ${$('#piso').val()} ${$('#pisos').val()} / ${$('#pisos').val()}`;
     $('#tocart').text($('#tocar').val());
     $('#telt').text(tel);
-    $('#telt').attr('href', 'tel:+51'+tel);
+    // $('#telt').attr('href', 'tel:+51'+tel);
     $('#colorT').text($('#color').val());
     $('#nombreCliente').text(nombre);
-    $('#direccionT').text(direccion);
+    $('#mzT').html($('#mz').val() ? 'Mz. '+$('#mz').val() : '-');
+    $('#jrT').html($('#jr').val() ? 'Jr/Calle. '+$('#jr').val() : '-');
+    $('#lotT').html($('#lt').val() ? 'Lt. '+$('#lt').val() : '-');
+    $('#urbT').html($('#urb').val() ? 'Urb. '+$('#urb').val() : '-');
+    $('#pisoT').html('Piso: '+($('#piso').val() ? $('#piso').val() : '-'));
+    $('#pisosT').html('N&deg;Pisos: '+($('#pisos').val() ? $('#pisos').val() : '-'));
     if(nombre == ""){
         Swal.fire("Falta ingresar nombre");
         return;
@@ -59,6 +64,32 @@ $('#siguiente').click(function() {
     
     $('#exampleModal').modal('show');
 });
+
+$('#telt').click(function (){
+    let tel = $('#tel').val();
+    let html = `<div style="display: flex; justify-content: space-around">
+        <div>
+            <a type="button" class="btn btn-primary" href="tel:+51${tel}">Llamar</a>
+        </div>
+        <div>
+            <a type="button" class="btn btn-secondary" onclick="enviarMensajeWhatsApp(${tel})">Whastapp</a>
+        </div>
+    </div>`;
+    Swal.fire({
+        title: "Acciones",
+        text: "Llamar o enviar whastapp",
+        html: html,
+        icon: "warning",
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "cerrar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+          
+        }
+    });
+})
 
 $('#submit').click(function() {
     if (signaturePad.isEmpty()) {
@@ -223,6 +254,10 @@ $('#submitContado').click(function() {
 function enviarMensajeWhatsApp(telefono, id) {
     var mensaje = encodeURIComponent('Hola, le hacemos envio de su bolea, puede revisarlo entrando a la siguiente url. http://mielolivos.test/vendedor/venta/'+id);
     window.open('https://wa.me/' + telefono + '?text=' + mensaje, '_blank');
+}
+
+function enviarMensajeWhatsApp(telefono){
+    window.open('https://wa.me/' + telefono, '_blank');
 }
 
 function formatNumber(number) {
