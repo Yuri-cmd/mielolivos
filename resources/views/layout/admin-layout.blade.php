@@ -87,15 +87,18 @@
         let urlSaveCajaChica = "{{ route('saveCajaChica') }}";
         let urlGetCajaChica = "{{ route('getCajaChica') }}";
         let urlUpdateSaldoCajaChica = "{{ route('updateSaldoCajaChica') }}";
+        let urlGetDescuento = "{{ route('getDescuentos') }}";
+        let urlUpdateDescuento = "{{ route('updateDescuento') }}";
+        let urlGetVentasOficina = "{{ route('getVentasOficina') }}";
+        let urlSaveVentasOficina = "{{ route('saveVentasOficina') }}";
+        let urlgetVentasOficinaDetalle = "{{ route('getVentasOficinaDetalle') }}";
+        let urlSavePago = "{{ route('savePago') }}";
+        let urlUpdateEstadoVenta = "{{ route('updateEstadoVenta') }}";
+        let urlGetComision = "{{ route('getComision') }}";
+        let urlUpdateComision = "{{ route('updateComision') }}";
+        let filtrarGrupos = "{{ route('filtrarGrupos') }}";
+        let asignarCobrador = "{{ route('asignarCobrador') }}";
     </script>
-    <div style="display: flex; justify-content: space-around">
-        <div>
-            <a type="button" class="btn btn-primary">Primary</a>
-        </div>
-        <div>
-            <a type="button" class="btn btn-secondary">Secondary</a>
-        </div>
-    </div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -110,7 +113,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- Date Range Picker JS -->
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{{ asset('js/herlpers/helper.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/admin/grupos.js') }}"></script>
+    <script src="{{ asset('js/admin/almacen.js') }}"></script>
+    <script src="{{ asset('js/admin/cajaChica.js') }}"></script>
+    <script src="{{ asset('js/admin/detalleGrupo.js') }}"></script>
+    <script src="{{ asset('js/admin/buscador.js') }}"></script>
+    <script src="{{ asset('js/admin/estadistica.js') }}"></script>
+    <script src="{{ asset('js/admin/descuento.js') }}"></script>
+    <script src="{{ asset('js/admin/ventaOficina.js') }}"></script>
 </body>
 
 </html>

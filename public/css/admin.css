@@ -351,6 +351,10 @@ input[type="number"] {
     background-color: #f0f0f0;
 }
 
+.list-unstyled li:last-child span:nth-of-type(2) {
+    text-decoration: underline;
+}
+
 @media (max-width: 768px) {
     .contenedor-buttons {
         justify-content: center;

@@ -268,10 +268,12 @@ function formatNumber(number) {
 }
 
 function calculateRemaining() {
-    const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+    const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
     const input1 = parseFloat(document.getElementById('input1').value) || 0;
     const input2 = parseFloat(document.getElementById('input2').value) || 0;
     const input3 = document.getElementById('input3');
+    const input3Container = document.getElementById('input3-container');
+    const input3ContainerFecha = document.getElementById('input3ContainerFecha');
 
     let sum = input1 + input2;
     
@@ -281,12 +283,30 @@ function calculateRemaining() {
         document.getElementById('input1').value = "";
         document.getElementById('input2').value = "";
         input3.value = "";
+        input3Container.style.display = 'none';
         return;
     }
 
     let remainingAmount = totalAmount - sum;
     input3.value = remainingAmount.toFixed(2);
+
+    // Show or hide input3 based on whether input2 is the remaining amount or not
+    if (remainingAmount > 0 && input2 !== remainingAmount) {
+        input3Container.style.display = 'block';
+        input3ContainerFecha.style.display = 'block';
+    } else {
+        input3Container.style.display = 'none';
+        input3ContainerFecha.style.display = 'none';
+    }
 }
 
-document.getElementById('input1').addEventListener('input', calculateRemaining);
+function updateInputs() {
+    const input1 = document.getElementById('input1').value;
+    
+    if (input1) {
+        calculateRemaining();
+    }
+}
+
+document.getElementById('input1').addEventListener('input', updateInputs);
 document.getElementById('input2').addEventListener('input', calculateRemaining);

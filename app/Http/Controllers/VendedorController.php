@@ -104,7 +104,6 @@ class VendedorController extends Controller
         // Obtener el ID de la nueva inserción
         $insertedId = $venta->id;
         $GrupoUsuario = GrupoUsuario::where('id_grupo', $request->idGrupo)->first();
-
         foreach ($request->detalle as $detalle) {
             DB::insert(
                 'insert into venta_detalle (id_venta,id_producto,cantidad,precio) values (?,?,?,?)',

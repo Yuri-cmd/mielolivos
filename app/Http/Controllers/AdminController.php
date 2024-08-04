@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\CajaChica;
 use App\Models\CajaChicaSaldo;
+use App\Models\Comision;
+use App\Models\Descuento;
 use App\Models\Grupo;
 use App\Models\GrupoUsuario;
 use App\Models\GrupoUsuarioProducto;
 use App\Models\Master;
+use App\Models\Pago;
 use App\Models\Usuario;
 use App\Models\Producto;
 use App\Models\Venta;
+use App\Models\VentaDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
@@ -123,10 +128,11 @@ class AdminController extends Controller
     public function createDetalleGrupo($idGrupo, $usuarios, $idCobrador)
     {
         $productos = Producto::all();
-        foreach ($usuarios as $usuario) {
+        foreach ($usuarios as $i => $usuario) {
             $insertedId = DB::table('grupo_usuario')->insertGetId([
                 'id_grupo' => $idGrupo,
-                'id_usuario' => $usuario->id
+                'id_usuario' => $usuario->id,
+                'lider' => $i == 0 ? 1 : 0
             ]);
             foreach ($productos as $producto) {
                 $stock = $usuario->stock / 10;
@@ -256,7 +262,18 @@ class AdminController extends Controller
                 }
                 return $producto;
             });
-        return json_encode($productos);
+        // Convertir la colección en un array para usar array_unique
+        $productosArray = $productos->toArray();
+
+        // Definir una función de comparación para identificar duplicados
+        function compareProducts($a, $b)
+        {
+            return $a['id'] === $b['id'];
+        }
+
+        // Eliminar duplicados
+        $uniqueProducts = array_values(array_intersect_key($productosArray, array_unique(array_column($productosArray, 'id'))));
+        return json_encode($uniqueProducts);
     }
 
     public function getMasterUsuario(Request $request)
@@ -339,6 +356,7 @@ class AdminController extends Controller
         $ventas = Venta::select('venta.id', 'venta.nombre', 'usuario.usuario')
             ->join('usuario', 'usuario.id', '=', 'venta.id_usuario')
             ->where('venta.es_contado', 0)
+            ->where('venta.es_oficina', 0)
             ->get();
         return response()->json($ventas);
     }
@@ -369,9 +387,11 @@ class AdminController extends Controller
     public function updateSaldoCajaChica(Request $request)
     {
         [$fechaInicio, $fechaFin] = getWeekIntervalNumber();
-        $registros = CajaChicaSaldo::where('fechaInicio', $fechaInicio)->where('fechaFin', $fechaFin)->get();
+        $registros = CajaChicaSaldo::whereDate('fechaInicio', '>=', $fechaInicio)
+            ->whereDate('fechaFin', '<=', $fechaFin)
+            ->get();
         $saldo = $request->saldo;
-        if(strpos($request->saldo, 'S/') !== false){
+        if (strpos($request->saldo, 'S/') !== false) {
             $saldo = explode('S/', $request->saldo);
             $saldo = $saldo[1];
         }
@@ -381,9 +401,278 @@ class AdminController extends Controller
             $cajaChica->fechaInicio = $fechaInicio;
             $cajaChica->fechaFin = $fechaFin;
             $cajaChica->save();
-        }else{
-            $registros->saldo = $saldo;
-            $registros->save();
+            return true;
+        }
+        foreach ($registros as $registro) {
+            $registro->saldo = $saldo;
+            $registro->save();
         }
     }
+
+    public function getDescuentos()
+    {
+        [$startDate, $endDate] = getWeekIntervalNumber();
+        $descuentos = Descuento::whereDate('creado_el', '>=', $startDate)
+            ->whereDate('creado_el', '<=', $endDate)
+            ->get();
+        $data = $this->generateData($descuentos);
+        return response()->json($data);
+    }
+
+    public function generateData($descuentos)
+    {
+        $usuarios = Usuario::where('rol', 2)->get()->keyBy('id');
+
+        $data = $usuarios->map(function ($usuario) use ($descuentos) {
+            $descuento = $descuentos->firstWhere('id_asesor', $usuario->id);
+            if ($descuento) {
+                return [
+                    'idDescuento' => $descuento->id,
+                    'idUsuario' => $usuario->id,
+                    'usuario' => $usuario->usuario,
+                    'envases' => $descuento->envases ?? 0,
+                    'panos' => $descuento->panos ?? 0,
+                    'pendiente' => $descuento->pendiente ?? 0,
+                    'tardanza' => $descuento->tardanza ?? 0,
+                    'total' => $descuento->total ?? 0,
+                    'parches' => $descuento->parches ?? 0,
+                ];
+            }
+            return [
+                'idDescuento' => null,
+                'idUsuario' => $usuario->id,
+                'usuario' => $usuario->usuario,
+                'envases' => 0,
+                'panos' => 0,
+                'pendiente' => 0,
+                'tardanza' => 0,
+                'total' => 0,
+                'parches' => 0,
+            ];
+        });
+
+        return $data->values()->all();
+    }
+
+    public function updateDescuento(Request $request)
+    {
+        $idUsuario = $request->input('idUsuario');
+        $field = $request->input('field');
+        $value = $request->input('value');
+        $idDescuento = $request->input('idDescuento');
+        if (trim($idDescuento) == "") {
+            $descuento = new Descuento();
+            $descuento->id_asesor = $idUsuario;
+            $descuento->$field = $value;
+            $descuento->save();
+            return response()->json(['success' => true]);
+        }
+        // Actualizar el modelo
+        $descuento = Descuento::find($idDescuento);
+        $descuento->$field = $value;
+        $descuento->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function getVentasOficina()
+    {
+        $productos = Producto::all();
+        $chunks = $productos->chunk(ceil($productos->count() / 2));
+        $productos1 = $chunks->get(0);
+        $productos2 = $chunks->get(1);
+        // Obtener todas las ventas que son de oficina
+        $ventas = Venta::with(['ventaDetalles', 'pagos' => function ($query) {
+            $query->orderBy('creado_el', 'desc'); // Ordena los pagos por fecha de creación descendente
+        }])
+            ->where('es_oficina', 1)
+            ->get();
+
+        $ventasOficina = $ventas->map(function ($venta) {
+            // Calcular el total de productos
+            $totalProductos = $venta->ventaDetalles->sum('cantidad');
+
+            // Obtener el último pago
+            $ultimoPago = $venta->pagos->first();
+            $abono = $ultimoPago->abono ?? 0;
+            $pendiente = $venta->pagos->last()->pendiente;
+
+            return [
+                'idVenta' => $venta->id,
+                'cliente' => $venta->nombre,
+                'fecha' => $venta->fecha,
+                'productos' => $totalProductos,
+                'abono' => $abono,
+                'pendiente' => $pendiente
+            ];
+        });
+
+        return response()->json(['productos1' => $productos1, 'productos2' => $productos2, 'ventasOficina' => $ventasOficina]);
+    }
+    public function saveVentasOficina(Request $request)
+    {
+        Carbon::setLocale('es');
+
+        $request->validate([
+            'cliente' => 'required|string|max:255',
+            'detalle' => 'required|array',
+            'detalle.*.id' => 'required|integer|exists:productos,id',
+            'detalle.*.cantidad' => 'required|numeric|min:1',
+            'detalle.*.precio' => 'required|numeric|min:0'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Crear la venta
+            $venta = new Venta();
+            $venta->id_usuario = Session::get('usuario_id');
+            $venta->nombre = $request->cliente;
+            $venta->es_oficina = 1;
+            $venta->save();
+            $insertedId = $venta->id;
+
+            $total = 0;
+            $totalProductos = 0;
+            // Insertar detalles de la venta
+            foreach ($request->detalle as $detalle) {
+                DB::insert(
+                    'insert into venta_detalle (id_venta, id_producto, cantidad, precio) values (?, ?, ?, ?)',
+                    [$insertedId, $detalle["id"], $detalle["cantidad"], $detalle["precio"]]
+                );
+                $total += floatval($detalle["cantidad"]) * floatval($detalle["precio"]);
+                $totalProductos += floatval($detalle["cantidad"]);
+            }
+            $pagado = floatval($request->abono) == $total;
+
+            $venta->estado = $pagado ? 1 : 0;
+            $venta->save();
+            $pendiente = $pagado ? 0 : $total - floatval($request->abono);
+            $pago = new Pago();
+            $pago->id_cobrador = Session::get('usuario_id');
+            $pago->id_venta = $insertedId;
+            $pago->abono = $request->abono;
+            $pago->pendiente = $pendiente;
+            $pago->creado_el = Carbon::now()->translatedFormat('l, d \d\e F \d\e Y');
+            $pago->save();
+
+            DB::commit();
+
+            return response()->json([
+                'idVenta' => $venta->id,
+                'cliente' => $venta->nombre,
+                'fecha' => Carbon::now()->translatedFormat('l, d \d\e F \d\e Y'),
+                'productos' => $totalProductos,
+                'abono' => $request->abono,
+                'pendiente' => $pendiente
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getVentasOficinaDetalle(Request $request)
+    {
+        $venta = Venta::find($request->idVenta);
+        $detalle = DB::select("SELECT nombre,vd.precio,vd.cantidad 
+                                FROM venta_detalle vd INNER JOIN productos p ON p.id = vd.id_producto 
+                                WHERE vd.id_venta = {$venta->id} and vd.cantidad != 0");
+        $pagos = Pago::where('id_venta', $venta->id)->get();
+        return response()->json(["venta" => $venta, 'ventaDetalle' => $detalle, 'pagos' => $pagos]);
+    }
+
+    public function getComision()
+    {
+        [$startDate, $endDate] = getWeekIntervalNumber();
+        $comisiones = Comision::whereDate('fecha', '>=', $startDate)
+            ->whereDate('fecha', '<=', $endDate)
+            ->get();
+        $data = $this->generateDataComision($comisiones);
+        return response()->json($data);
+    }
+
+    public function generateDataComision($comisiones)
+    {
+        $usuarios = Usuario::where('rol', 2)->get()->keyBy('id');
+
+        $data = $usuarios->map(function ($usuario) use ($comisiones) {
+            $comision = $comisiones->firstWhere('id_asesor', $usuario->id);
+            if ($comision) {
+                return [
+                    'idComision' => $comision->id,
+                    'idUsuario' => $usuario->id,
+                    'usuario' => $usuario->usuario,
+                    'productos' => $comision->productos ?? 0,
+                    'vendedor' => $comision->vendedor ?? 0,
+                    'lider' => $comision->lider ?? 0,
+                    'comision' => $comision->comision ?? 0,
+                    'descuentos' => $comision->descuentos ?? 0,
+                    'bono' => $comision->bono ?? 0,
+                    'pefectivo' => $comision->pefectivo ?? 0,
+                    'pdeposito' => $comision->pdeposito ?? 0,
+                    'pfinal' => $comision->pfinal ?? 0,
+                    'fecha' => $comision->fecha ?? 0,
+                ];
+            }
+            return [
+                'idComision' => null,
+                'idUsuario' => $usuario->id,
+                'usuario' => $usuario->usuario,
+                'productos' => 0,
+                'vendedor' => 0,
+                'lider' => 0,
+                'comision' => 0,
+                'descuentos' => 0,
+                'bono' => 0,
+                'pefectivo' => 0,
+                'pdeposito' => 0,
+                'pfinal' => 0,
+                'fecha' => 0,
+            ];
+        });
+
+        return $data->values()->all();
+    }
+
+    public function updateComision(Request $request)
+    {
+        $idUsuario = $request->input('idUsuario');
+        $field = $request->input('field');
+        $value = $request->input('value');
+        $idcomision = $request->input('idcomision');
+        if (trim($idcomision) == "") {
+            $comision = new Comision();
+            $comision->id_asesor = $idUsuario;
+            $comision->$field = $value;
+            $comision->save();
+            return response()->json(['success' => true]);
+        }
+        // Actualizar el modelo
+        $comision = Comision::find($idcomision);
+        $comision->$field = $value;
+        $comision->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function filtrarGrupos(Request $request)
+    {
+        $fecha = $request->fecha;
+        $grupos = Grupo::whereDate('fecha', $fecha)->get();
+
+        return response()->json($grupos);
+    }
+
+    public function asignarCobrador(Request $request)
+{
+    $grupoId = $request->input('grupo_id');
+    $cobradorId = $request->input('cobrador_id');
+    DB::table('grupo_usuario')->insertGetId([
+        'id_grupo' => $grupoId,
+        'id_usuario' => $cobradorId,
+        'lider' => 0
+    ]);
+    return response()->json(['message' => 'Cobrador asignado correctamente']);
+}
 }

@@ -99,7 +99,6 @@ function mostrar(id){
             });
             $('#payment-table-body').html(row);
             let restante = (parseFloat(cuotas.cuota2) + parseFloat(cuotas.cuota3)) - pagado;
-            console.log(restante);
             $('#restante').val(restante);
             $('#idVenta').val(venta.id);
             if(venta.estado == '1'){
@@ -107,7 +106,6 @@ function mostrar(id){
                 $('#abonoform').hide();
                 $('#submit').hide();
             }
-
         },
     );
 }

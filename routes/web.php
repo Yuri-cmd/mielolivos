@@ -61,6 +61,8 @@ Route::post('/admin/get/grupo', [AdminController::class, 'getGrupoDetalle'])->na
 Route::post('/admin/save/deposito/taxi', [AdminController::class, 'updateDepositoTaxiGrupo'])->name('updateDepositoTaxiGrupo');
 Route::post('/admin/save/campo/usuario', [AdminController::class, 'updateCampoUsuario'])->name('updateCampoUsuario');
 Route::post('/admin/detalle/vendedor', [AdminController::class, 'getDetalleVendedor'])->name('getDetalleVendedor');
+Route::post('/filtrar-grupos', [AdminController::class, 'filtrarGrupos'])->name('filtrarGrupos');
+Route::post('/asignar-cobrador', [AdminController::class, 'asignarCobrador'])->name('asignarCobrador');
 
 //Vendedor
 Route::post('/vendedor/saveVenta', [VendedorController::class, 'saveVenta'])->name('saveVenta');
@@ -79,3 +81,16 @@ Route::get('/buscar-usuarios', [AdminController::class, 'buscarUsuarios'])->name
 Route::post('saveCajaChica', [AdminController::class, 'saveCajaChica'])->name('saveCajaChica');
 Route::get('getCajaChica', [AdminController::class, 'getCajaChica'])->name('getCajaChica');
 Route::post('UpdateSaldoCajaChica', [AdminController::class, 'updateSaldoCajaChica'])->name('updateSaldoCajaChica');
+
+//Descuentos
+Route::get('getDescuentos', [AdminController::class, 'getDescuentos'])->name('getDescuentos');
+Route::post('/update-descuento', [AdminController::class, 'updateDescuento'])->name('updateDescuento');
+
+//Ventas Oficina
+Route::get('getVentasOficina', [AdminController::class, 'getVentasOficina'])->name('getVentasOficina');
+Route::post('saveVentasOficina', [AdminController::class, 'saveVentasOficina'])->name('saveVentasOficina');
+Route::post('getVentasOficinaDetalle', [AdminController::class, 'getVentasOficinaDetalle'])->name('getVentasOficinaDetalle');
+
+//Comision  
+Route::get('getComision', [AdminController::class, 'getComision'])->name('getComision');
+Route::post('updateComision', [AdminController::class, 'updateComision'])->name('updateComision');

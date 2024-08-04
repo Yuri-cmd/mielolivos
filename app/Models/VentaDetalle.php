@@ -5,22 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pago extends Model
+class VentaDetalle extends Model
 {
     use HasFactory;
-
     public $timestamps = false;
 
-    protected $table = 'pagos_cliente';
+    protected $table = 'venta_detalle';
 
     protected $fillable = [
-        'id_cobrador',
         'id_venta',
-        'abono',
-        'pendiente',
-        'creado_el',
+        'id_producto',
+        'cantidad',
+        'precio',
     ];
-
+    
     public function venta()
     {
         return $this->belongsTo(Venta::class, 'id_venta');

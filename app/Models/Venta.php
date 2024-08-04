@@ -30,4 +30,14 @@ class Venta extends Model
         'fecha',
         'es_contado'
     ];
+
+    public function ventaDetalles()
+    {
+        return $this->hasMany(VentaDetalle::class, 'id_venta');
+    }
+
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class, 'id_venta');
+    }
 }

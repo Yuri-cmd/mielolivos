@@ -3,25 +3,32 @@
     <div class="contenedor">
         <div class="contenedor-buttons">
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="buscador">BUSCADOR G.</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="buscador">BUSCADOR
+                    G.</button>
             </div>
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow">VENTAS DE OFICINA</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="oficina">VENTAS DE
+                    OFICINA</button>
             </div>
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="comision">COMISIONES</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow"
+                    id="comision">COMISIONES</button>
             </div>
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="descuento">DESCUENTOS</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow"
+                    id="descuento">DESCUENTOS</button>
             </div>
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="estadistica">ESTADISTICAS</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow"
+                    id="estadistica">ESTADISTICAS</button>
             </div>
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="cuadreGeneral">CUADRE GENERAL</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="cuadreGeneral">CUADRE
+                    GENERAL</button>
             </div>
             <div>
-                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="cajaChica">CAJA CHICA</button>
+                <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="cajaChica">CAJA
+                    CHICA</button>
             </div>
             <div>
                 <button type="button"style="font-weight: bold;" class="btn btn-light shadow" id="master">MASTER</button>
@@ -55,14 +62,11 @@
                             <h5 class="fw-bold">GRUPOS</h5>
                         </div>
                         <div class="contenedor-agregar">
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                data-bs-target="#agregarGrupo">
-                                <i class="bi bi-plus-square-dotted"></i>
-                            </button>
+                            <input type="date" id="filterDate" class="form-control">
                         </div>
                         <div class="usuarios" id="contenedorGrupos">
                             @foreach ($grupos as $grupo)
-                                <div class="cardm" onclick="visualizarGrupo({{ $grupo->id }})"
+                                <div class="cardm grupo" onclick="visualizarGrupo({{ $grupo->id }})"
                                     data-id="{{ $grupo->id }}" style="cursor: pointer">
                                     <span>{{ $grupo->nombre }}</span>
                                     <small>{{ formatoFechaDos($grupo->fecha) }}</small>
@@ -84,7 +88,7 @@
                     </div>
                     <div class="usuarios">
                         @foreach ($cobradores as $cobrador)
-                            <div class="cardm cardscroll" data-id="{{ $cobrador->id }}">
+                            <div class="cardm cobrador" data-id="{{ $cobrador->id }}">
                                 <span>{{ strtoupper($cobrador->usuario) }}<a data-id="{{ $cobrador->id }}"
                                         class="eliminarA deleteCobrador">x</a></span>
                                 <small>{{ $fecha }}</small>
@@ -144,175 +148,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" data-bs-keyboard="false"
-        tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div style="display: flex; justify-content: space-between; width: 100%;">
-                        <h1 class="modal-title fs-5 nameGrupo"></h1>
-                        <h1 class="modal-title fs-5 fechaGrupo"></h1>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="display: flex; flex-direction: column;">
-                    <input type="text" id="idGrupoView" value="" hidden>
-                    <div style="display: flex;">
-                        <div style="width: 100%; height: auto;">
-                            <table class="table" id="miTabla">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" style="text-align: center">Vendedor</th>
-                                        <th scope="col" style="text-align: center">Campo</th>
-                                        <th scope="col" style="text-align: center">Vendidos</th>
-                                        <th scope="col" style="text-align: center">Sobrantes</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="detalleBody">
+    {{-- Detalle Grupo --}}
+    @include('admin.detalle-grupo')
 
-                                </tbody>
-                                <tfoot>
-                                    <td></td>
-                                    <td style="text-align: center" class="table-light" id="totalCampo">10</td>
-                                    <td style="text-align: center" class="table-light" id="totalVendido">10</td>
-                                    <td style="text-align: center" class="table-light" id="totalSobrante">10</td>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div style="width: 100%; height: 300px;">
-                            <canvas id="bar" style="width: 100%;"></canvas>
-                        </div>
-                    </div>
-                    <div style="display: flex;width: 50%;justify-content: space-between;">
-                        <div>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: start" scope="col">Deposito (S/)</th>
-                                        <th style="text-align: start; font-weight: unset; border: 1px solid gray;"
-                                            id="depositod" class="table-warning" contenteditable="true">
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th style="text-align: start" scope="row">Taxi(S/)</th>
-                                        <td style="text-align: start; border: 1px solid gray;" id="taxid"
-                                            class="table-warning" contenteditable="true">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: start" scope="row">Efectivo(S/)</th>
-                                        <td style="text-align: start; border: 1px solid gray;" id="efectivod"></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: start" scope="row">Por cobrar(S/)</th>
-                                        <td style="text-align: start;border: 1px solid gray;" id="porcobrar"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: start;" scope="col">Creditos (U)</th>
-                                        <th style="text-align: start; font-weight: unset;border: 1px solid gray;"
-                                            id="creditos"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th style="text-align: start" scope="row">Contados(U)</th>
-                                        <td style="text-align: start;border: 1px solid gray;" id="contado"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a type="button" class="btn btn-danger" id="deleteGrupo">Eliminar</a>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="agregarAsociado" tabindex="-1" aria-labelledby="agregarAsociadoLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="agregarAsociadoLabel">Agregar Asociado</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formAsociado">
-                        <div class="mb-3">
-                            <label for="usuario" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="usuario" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="clave" class="form-label">Clave</label>
-                            <input type="password" class="form-control" id="clave" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="submitAsociado">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="agregarGrupo" data-bs-backdrop="static" data-bs-keyboard="false"
-        aria-labelledby="agregarGrupoLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="agregarGrupoLabel">Agregar Grupo</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre Grupo</label>
-                        <input type="text" class="form-control" id="nombre" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="submitGrupo">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="agregarCobrador" tabindex="-1" aria-labelledby="agregarCobradorLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="agregarCobradorLabel">Agregar Cobrador</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formCobrador">
-                        <div class="mb-3">
-                            <label for="usuarioc" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="usuarioc" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="clave" class="form-label">Clave</label>
-                            <input type="password" class="form-control" id="clavec" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="submitCobrador">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{-- Creacion de usuarios --}}
+    @include('admin.creacion-usuarios')
 
     <div class="modal fade" id="masterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -346,194 +186,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="detalleVendedorModal" tabindex="-1" aria-labelledby="detalleVendedorModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="detalleVendedorModalLabel">Carpeta de Asesor</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" id="idGrupoUsuario" value="" hidden>
-                    <div class="text-center">
-                        <h3 id="nombreVendedor"></h3>
-                        <h6 id="fechaVenta"></h6>
-                    </div>
-                    <div>
-                        <table class="table" id="tableDetalle">
-                            <thead>
-                                <tr class="text-center">
-                                    <th scope="col">#</th>
-                                    <th scope="col">Cliente</th>
-                                    <th scope="col">Vendidos</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot>
-                                <td></td>
-                                <td></td>
-                                <td class="text-center" id="totalVendedor"></td>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div>
-                        <table class="table" id="tableDetalleVenta">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Creditos</th>
-                                    <th scope="col">Contados</th>
-                                    <th scope="col">Adelantos</th>
-                                    <th scope="col">Por cobrar</th>
-                                    <th scope="col">Caja del dia</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cerrarDetalle">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- Buscador general --}}
-    <div class="modal fade" id="buscadorModal" tabindex="-1" aria-labelledby="buscadorModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="buscadorModalLabel">Buscador</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table" id="tableBuscador" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Cliente</th>
-                                <th scope="col">Asesor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="buscadorDetalle" tabindex="-1" aria-labelledby="buscadorDetalleLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="buscadorDetalleLabel">Detalle de Venta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="number" id="idVenta" hidden>
-                    <div class="sales-summary">
-                        <div class="header-info mb-2" style="">
-                            <span>Asesor: <a href="tel:+521234567890"
-                                    style="font-weight: bold; text-decoration: underline; color: black;"
-                                    id="asesor">Jorge
-                                    Bernal</a></span>
-                            <span id="fechaVenta"></span>
-                        </div>
-                        <div class="mb-4">
-                            <div>
-                                <h4 class="text-center" id="cliente"></h4>
-                            </div>
-                            <div class="text-center">
-                                <h5><span id="jr"></span> / <span id="urb"></span></h5>
-                            </div>
-                            <div class="text-center">
-                                <span style="font-weight: bold; text-decoration: underline;" id="piso"></span> /
-                                <span style="font-weight: bold; text-decoration: underline;" id="pisos"></span> /
-                                <span style="font-weight: bold; text-decoration: underline;" id="color"></span>
-                            </div>
-                            <div class="text-center">
-                                <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>
-                                <span id="tocar">3RA PUERTA MARRÓN</span>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <h4 style="font-weight: bold; text-decoration: underline;">
-                                <a href="tel:+521234567890" style="text-decoration: none; color: black"
-                                    id="telefono"></a>
-                            </h4>
-                        </div>
-                        <ul class="list-unstyled" style="margin: 0;">
-
-                        </ul>
-                        <p class="text-end fw-bold" style="margin-top: -10px;" id="total"></p>
-                    </div>
-                    <div class="payment-details">
-                        <div class="row text-center">
-                            <div class="col cuotas">
-                                <span>ADELANTO</span><br>
-                                <span id="fecha1"></span>
-                            </div>
-                            <div class="col cuotas">
-                                <span>1RA CUOTA</span><br>
-                                <span id="fecha2"></span>
-                            </div>
-                            <div class="col cuotas">
-                                <span>2DA CUOTA</span><br>
-                                <span id="fecha3"></span>
-                            </div>
-                            {{-- <div class="col">Pendiente</div> --}}
-                        </div>
-                        <div class="row text-center" style="">
-                            <div class="col"><input type="number" class="form-control" id="cuota1" readonly>
-                            </div>
-                            <div class="col"><input type="number" class="form-control" id="cuota2" readonly>
-                            </div>
-                            <div class="col"><input type="number" class="form-control" id="cuota3" readonly>
-                            </div>
-                            {{-- <div class="col"><input type="number" class="form-control" value="180"></div> --}}
-                        </div>
-                        <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
-                            <div style="display: flex; justify-content: center;">
-                                <label for="firma">Firma:</label>
-                                <img id="firma" src='' alt="" width="300" height="200">
-                            </div>
-                        </div>
-                        <input type="text" id="restante" value="" hidden>
-                        <div class="table-responsive" style="margin-top:10px;">
-                            <table class="table">
-                                <thead style="text-align: center;">
-                                    <tr>
-                                        <th></th>
-                                        <th>Abono</th>
-                                        <th>Pendiente</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="payment-table-body">
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div style="text-align: center; display: none;" id="cancelado">
-                            <h2 style="font-weight: bold; color: red;">CANCELADO</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="submit">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('admin.buscador')
 
     {{-- Cuadre general --}}
     <div class="modal fade" id="cuadreGeneralModal" tabindex="-1" aria-labelledby="cuadreGeneralModalLabel"
@@ -700,86 +354,7 @@
     </div>
 
     {{-- Caja chica --}}
-    <div class="modal fade" id="cajaChicaModal" tabindex="-1" aria-labelledby="cajaChicaModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 fw-bold" id="cajaChicaModalLabel">CAJA CHICA</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div style="display: flex; justify-content: end">
-                        <button type="button" class="btn btn-primary mb-2" id="agregarCaja">Agregar</button>
-                    </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">Fecha</th>
-                                <th scope="col">Gasto</th>
-                                <th scope="col">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cajadetalle">
-
-                        </tbody>
-                    </table>
-                    <div style="display: flex; justify-content: space-between">
-                        <div>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">SALDO</th>
-                                        <th scope="col" id="saldoCaja" class="table-warning" contenteditable="true">S/0.00</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">TOTAL</th>
-                                        <th scope="col" id="montoCaja"></th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="cajaInsert" tabindex="-1" aria-labelledby="cajaInserLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 fw-bold" id="cajaInserLabel">CAJA CHICA</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="nombreGasto" class="form-label">Nombre del gasto</label>
-                            <input type="text" class="form-control" id="nombreGasto" aria-describedby="emailHelp">
-                        </div>
-                        <div class="mb-3">
-                            <label for="monto" class="form-label">monto</label>
-                            <input type="number" class="form-control" id="cajamonto">
-                        </div>
-                        <div id="emailHelp" class="form-text" style="display:none;">Todos los campos son requeridos</div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-success" id="guardarCaja">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('admin.cajaChica')
     {{-- DESCUENTOS --}}
     <div class="modal fade" id="descuentoModal" tabindex="-1" aria-labelledby="descuentoModalLabel"
         aria-hidden="true">
@@ -802,52 +377,7 @@
                                 <th scope="col">PARCHES</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">Sara</th>
-                                <td>2</td>
-                                <td>1</td>
-                                <td>S/65</td>
-                                <td>3</td>
-                                <td>S/92</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Gabriel</th>
-                                <td>1</td>
-                                <td>0</td>
-                                <td>S/130</td>
-                                <td>1</td>
-                                <td>S/139</td>
-                                <td>1</td>
-                            </tr>
-                            <tr>
-                                <th scope="row"></th>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="row"></th>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">TOTAL</th>
-                                <td>4</td>
-                                <td>1</td>
-                                <td>S/195</td>
-                                <td>4</td>
-                                <td>S/231</td>
-                                <td>3</td>
-                            </tr>
+                        <tbody id="tdescuento">
                         </tbody>
                     </table>
                 </div>
@@ -882,43 +412,8 @@
                                 <th scope="col">PAGO FINAL</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">Sara</th>
-                                <td>90</td>
-                                <td>35</td>
-                                <td>55</td>
-                                <td>S/665</td>
-                                <td>S/92</td>
-                                <td>-</td>
-                                <td>S/173</td>
-                                <td>S/400</td>
-                                <td>S/573</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Gabriel</th>
-                                <td>101</td>
-                                <td>50</td>
-                                <td>51</td>
-                                <td>s/758</td>
-                                <td>S/139</td>
-                                <td>50</td>
-                                <td>S/169</td>
-                                <td>S/500</td>
-                                <td>S/669</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">TOTAL</th>
-                                <td>191</td>
-                                <td>105</td>
-                                <td>86</td>
-                                <td>S/1423</td>
-                                <td>S/231</td>
-                                <td>50</td>
-                                <td>S/342</td>
-                                <td>S/900</td>
-                                <td>S/1242</td>
-                            </tr>
+                        <tbody id="tcomision">
+
                         </tbody>
                     </table>
                 </div>
@@ -928,6 +423,9 @@
             </div>
         </div>
     </div>
+
+    {{-- Venta oficina --}}
+    @include('admin.ventas-oficina')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>

@@ -90,7 +90,8 @@
                 <div class="row g-3">
                     <div class="col-sm" style="text-align: center;">
                         <label for="Color" style="font-weight: bold;">Color</label>
-                        <input type="text" class="form-control" id="color" placeholder="Color" aria-label="Color">
+                        <input type="text" class="form-control" id="color" placeholder="Color"
+                            aria-label="Color">
                     </div>
                     <div class="col-sm" style="text-align: center;">
                         <label for="Tocar" style="font-weight: bold;">Tocar</label>
@@ -108,126 +109,130 @@
                 <button id="siguiente" class="btn btn-success">Siguiente</button>
             </div>
         </div>
-    @endif
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Detalle de Venta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="sales-summary">
-                        <div class="header-info mb-2" style="">
-                            <span>Asesor: {{ ucwords(Session::get('usuario')) }}</span>
-                            <span>{{ $fecha }}</span>
-                        </div>
-                        <div class="mb-4">
-                            <div>
-                                <h4 class="text-center" id="nombreCliente"></h4>
-                            </div>
-                            <div class="text-center">
-                                <h5><span id="jrT"></span>/ <span id="mzT"></span>/ <span id="lotT"></span> / <span id="urbT"></span></h5>
-                            </div>
-                            <div class="text-center">
-                                <span style="font-weight: bold; text-decoration: underline;" id="pisoT"></span> /
-                                <span style="font-weight: bold; text-decoration: underline;" id="pisosT"></span>
-                            </div>
-                            <div class="text-center">
-                                <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>
-                                <span id="tocart"></span> <span id="colorT"></span>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <h4 style="font-weight: bold; text-decoration: underline;">
-                                <a style="text-decoration: none; color: black" id="telt"></a>
-                            </h4>
-                        </div>
-                        <ul class="list-unstyled" style="margin: 0;">
-                        </ul>
-                        <p class="text-end fw-bold" style="margin-top: -10px;" id="total"></p>
-                        <input type="text" id="totalAmount" value="" hidden>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Detalle de Venta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="payment-details">
-                        <div class="row text-center">
-                            <div class="col cuotas">
-                                <span>ADELANTO</span>
-                                <span>
-                                    {{ $formatoFecha }}
-                                </span>
+                    <div class="modal-body">
+                        <div class="sales-summary">
+                            <div class="header-info mb-2" style="">
+                                <span>Asesor: {{ ucwords(Session::get('usuario')) }}</span>
+                                <span>{{ $fecha }}</span>
                             </div>
-                            <div class="col cuotas">
-                                <span>1RA CUOTA</span>
-                                <span>
-                                    {{ $formatoFecha1 }}
-                                </span>
+                            <div class="mb-4">
+                                <div>
+                                    <h4 class="text-center" id="nombreCliente"></h4>
+                                </div>
+                                <div class="text-center">
+                                    <h5><span id="jrT"></span>/ <span id="mzT"></span>/ <span
+                                            id="lotT"></span> / <span id="urbT"></span></h5>
+                                </div>
+                                <div class="text-center">
+                                    <span style="font-weight: bold; text-decoration: underline;" id="pisoT"></span> /
+                                    <span style="font-weight: bold; text-decoration: underline;" id="pisosT"></span>
+                                </div>
+                                <div class="text-center">
+                                    <span style="font-weight: bold; text-decoration: underline;">Tocar:</span>
+                                    <span id="tocart"></span> <span id="colorT"></span>
+                                </div>
                             </div>
-                            <div class="col cuotas">
-                                <span>2DA CUOTA</span>
-                                <span>
-                                    {{ $formatoFecha2 }}
-                                </span>
+                            <div class="text-center">
+                                <h4 style="font-weight: bold; text-decoration: underline;">
+                                    <a style="text-decoration: none; color: black" id="telt"></a>
+                                </h4>
                             </div>
-                            {{-- <div class="col">Pendiente</div> --}}
-                        </div>
-                        <div class="row text-center" style="margin-top: -10px;">
-                            <div class="col"><input id="input1" type="number" class="form-control"
-                                    value=""></div>
-                            <div class="col"><input id="input2" type="number" class="form-control"
-                                    value=""></div>
-                            <div class="col"><input id="input3" type="number" class="form-control"
-                                    value="" readonly></div>
-                        </div>
-                        <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
-                            <div style="display: flex; justify-content: center;">
-                                <label for="firma">Firma:</label>
-                                <canvas id="signature-pad" class="signature-pad" width="400" height="200"></canvas>
-                            </div>
-                            <button class="btn btn-secondary mt-2" id="clear">Borrar</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atr&aacute;s</button>
-                    <button type="button" class="btn btn-primary" id="submit"
-                        data-idGrupo="{{ $gruposHoy[0]->id }}">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="ContadoModal" tabindex="-1" aria-labelledby="ContadoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ContadoModalLabel">Detalle de Venta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="sales-summary">
-                        <div class="header-info mb-2" style="">
-                            <span>Asesor: {{ ucwords(Session::get('usuario')) }}</span>
-                            <span>{{ $fecha }}</span>
-                        </div>
-                        <div class="mt-8">
                             <ul class="list-unstyled" style="margin: 0;">
                             </ul>
+                            <p class="text-end fw-bold" style="margin-top: -10px;" id="total"></p>
+                            <input type="text" id="totalAmount" value="" hidden>
                         </div>
-                        <p class="text-end fw-bold" style="margin-top: -10px;" id="totalc"></p>
-                        <input type="text" id="totalAmountc" value="" hidden>
-                    </div>
-                    <div class="payment-details">
-                        <div class="row text-center"
-                            style="border: 1px solid red;padding: 10px;border-radius: 10px;rgba(99, 99, 99, 0.2) 0px 2px 8px 0px">
-                            <h2 class="text-danger">Cancelado</h2>
+                        <div class="payment-details">
+                            <div class="row text-center">
+                                <div class="col cuotas">
+                                    <span>ADELANTO</span>
+                                    <span>
+                                        {{ $formatoFecha }}
+                                    </span>
+                                </div>
+                                <div class="col cuotas">
+                                    <span>1RA CUOTA</span>
+                                    <span>
+                                        {{ $formatoFecha1 }}
+                                    </span>
+                                </div>
+                                <div class="col cuotas" id="input3ContainerFecha" style="display: none;">
+                                    <span>2DA CUOTA</span>
+                                    <span>
+                                        {{ $formatoFecha2 }}
+                                    </span>
+                                </div>
+                                {{-- <div class="col">Pendiente</div> --}}
+                            </div>
+                            <div class="row text-center" style="margin-top: -10px;">
+                                <div class="col"><input id="input1" type="number" class="form-control"
+                                        value=""></div>
+                                <div class="col"><input id="input2" type="number" class="form-control"
+                                        value=""></div>
+                                <div class="col" id="input3-container" style="display: none;"><input id="input3"
+                                        type="number" class="form-control" value="" readonly></div>
+                            </div>
+                            <div class="firma mt-3" style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="display: flex; justify-content: center;">
+                                    <label for="firma">Firma:</label>
+                                    <canvas id="signature-pad" class="signature-pad" width="400"
+                                        height="200"></canvas>
+                                </div>
+                                <button class="btn btn-secondary mt-2" id="clear">Borrar</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atr&aacute;s</button>
-                    <button type="button" class="btn btn-primary" id="submitContado"
-                        data-idGrupo="{{ $gruposHoy[0]->id }}">Guardar</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atr&aacute;s</button>
+                        <button type="button" class="btn btn-primary" id="submit"
+                            data-idGrupo="{{ $gruposHoy[0]->id }}">Guardar</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="modal fade" id="ContadoModal" tabindex="-1" aria-labelledby="ContadoModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ContadoModalLabel">Detalle de Venta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="sales-summary">
+                            <div class="header-info mb-2" style="">
+                                <span>Asesor: {{ ucwords(Session::get('usuario')) }}</span>
+                                <span>{{ $fecha }}</span>
+                            </div>
+                            <div class="mt-8">
+                                <ul class="list-unstyled" style="margin: 0;">
+                                </ul>
+                            </div>
+                            <p class="text-end fw-bold" style="margin-top: -10px;" id="totalc"></p>
+                            <input type="text" id="totalAmountc" value="" hidden>
+                        </div>
+                        <div class="payment-details">
+                            <div class="row text-center"
+                                style="border: 1px solid red;padding: 10px;border-radius: 10px;rgba(99, 99, 99, 0.2) 0px 2px 8px 0px">
+                                <h2 class="text-danger">Cancelado</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atr&aacute;s</button>
+                        <button type="button" class="btn btn-primary" id="submitContado"
+                            data-idGrupo="{{ $gruposHoy[0]->id }}">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
